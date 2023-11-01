@@ -161,3 +161,8 @@ cython_debug/
 
 # Misc
 .DS_Store
+<<<<<<< Updated upstream
+=======
+keywords.txt
+.vscode/
+>>>>>>> Stashed changes
