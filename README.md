@@ -1,2 +1,2 @@
 # suicapydcV3
-I'm forgotting Python so I'm rewriting Suica once again.
+I'm forgetting Python so I'm rewriting Suica once again.
