@@ -11,6 +11,7 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 
 async def load_extensions():
     await bot.load_extension("Extensions.BotManager")
+    await bot.load_extension("Extensions.KeywordReply")
 
 asyncio.run(load_extensions())
 

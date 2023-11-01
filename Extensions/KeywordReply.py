@@ -1,5 +1,7 @@
 from discord.ext import commands
 
+from Replies.Messages import Messages
+
 '''
 Keyword reply function!
 '''
@@ -42,10 +44,10 @@ class KeywordReply(commands.Cog):
     async def _toggle_kw(self, ctx):
         if ctx.guild.id in self.blacklist:
             self.blacklist.remove(ctx.guild.id)
-            await ctx.send("已開啟關鍵字回覆")
+            await ctx.send(Messages.KEYWORD_REPLY_ENABLED.format(ctx.guild.name))
         else:
             self.blacklist.append(ctx.guild.id)
-            await ctx.send("已關閉關鍵字回覆")
+            await ctx.send(Messages.KEYWORD_REPLY_DISABLED.format(ctx.guild.name))
         
 
 async def setup(bot):
