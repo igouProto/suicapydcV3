@@ -1,5 +1,10 @@
 from discord.ext import commands
 
+<<<<<<< HEAD
+from Replies.Messages import Messages
+
+=======
+>>>>>>> main
 '''
 Keyword reply function!
 '''
@@ -37,15 +42,26 @@ class KeywordReply(commands.Cog):
         if message.content in self.dictionary.keys():
             await message.channel.send(self.dictionary[message.content])
 
+<<<<<<< HEAD
+    # reply function toggle
+=======
     # toggle the function on and off by adding or removing the guild from the blacklist
+>>>>>>> main
     @commands.command(name="togglekw")
     async def _toggle_kw(self, ctx):
         if ctx.guild.id in self.blacklist:
             self.blacklist.remove(ctx.guild.id)
+<<<<<<< HEAD
+            await ctx.send(Messages.KEYWORD_REPLY_ENABLED.format(ctx.guild.name))
+        else:
+            self.blacklist.append(ctx.guild.id)
+            await ctx.send(Messages.KEYWORD_REPLY_DISABLED.format(ctx.guild.name))
+=======
             await ctx.send("已開啟關鍵字回覆")
         else:
             self.blacklist.append(ctx.guild.id)
             await ctx.send("已關閉關鍵字回覆")
+>>>>>>> main
         
 
 async def setup(bot):

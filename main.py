@@ -14,4 +14,6 @@ async def load_extensions():
     await bot.load_extension("Extensions.KeywordReply")
 
 asyncio.run(load_extensions())
+
+# TODO: Revive config function and hide tokens in config.json
 bot.run("NTgyNDUzNzAzNzYwNDEyNjcz.GuZDnn.MuEpoM-xtUOpnbfEmJOPnmm2mmocrZBDrjzVfQ")

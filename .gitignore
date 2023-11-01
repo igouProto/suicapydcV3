@@ -161,4 +161,10 @@ cython_debug/
 
 # Misc
 .DS_Store
+<<<<<<< HEAD
 keywords.txt
+.vscode/
+
+=======
+keywords.txt
+>>>>>>> main
