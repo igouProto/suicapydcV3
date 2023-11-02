@@ -1,6 +1,9 @@
+import logging
 from discord.ext import commands
-
 from Replies.Messages import Messages
+
+# logging
+log = logging.getLogger(__name__)
 
 '''
 Keyword reply function!
@@ -24,8 +27,7 @@ class KeywordReply(commands.Cog):
                     self.dictionary[keyword] = reply
             source.close()
         except Exception as e:
-            print(e)
-            print("Error loading keywords.txt")
+            log.error("Failed to load keywords.txt: {}".format(e))
 
     # main reply function
     @commands.Cog.listener()
@@ -52,4 +54,4 @@ class KeywordReply(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(KeywordReply(bot))
-    print("Keyword reply loaded")
+    log.info("KeywordReply loaded")
