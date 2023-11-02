@@ -17,4 +17,4 @@ class Template(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(Template(bot))
-    log.info("Template loaded")
+    log.info("Module loaded")
