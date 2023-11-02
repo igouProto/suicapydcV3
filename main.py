@@ -33,5 +33,5 @@ async def load_extensions():
 
 asyncio.run(load_extensions())
 
-# TODO: Revive config function and hide tokens in config.json
+# TODO: Revive config function and hide tokens in config.json (and change the token before making this repo public)
 bot.run("NTgyNDUzNzAzNzYwNDEyNjcz.GuZDnn.MuEpoM-xtUOpnbfEmJOPnmm2mmocrZBDrjzVfQ")

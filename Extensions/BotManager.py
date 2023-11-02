@@ -37,4 +37,4 @@ class BotManager(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(BotManager(bot))
-    log.info("BotManager loaded")
+    log.info("Module loaded")

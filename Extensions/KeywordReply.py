@@ -54,4 +54,4 @@ class KeywordReply(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(KeywordReply(bot))
-    log.info("KeywordReply loaded")
+    log.info("Module loaded")
