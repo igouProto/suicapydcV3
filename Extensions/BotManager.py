@@ -5,9 +5,10 @@ from Replies.Messages import Messages
 # logging
 log = logging.getLogger(__name__)
 
-'''
+"""
 Bot manager.
-'''
+"""
+
 
 class BotManager(commands.Cog):
     def __init__(self, bot):
