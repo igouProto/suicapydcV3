@@ -1,4 +1,5 @@
 import logging
+import discord
 from discord.ext import commands
 from Replies.Messages import Messages
 
@@ -15,9 +16,16 @@ class BotManager(commands.Cog):
         self.bot = bot
         self.bot.remove_command("help")
 
+    # Event listeners
     @commands.Cog.listener()
     async def on_ready(self):
         log.info("Suica has been booted!")
+        await self.bot.get_channel(int(self.bot.backstage_channel)).send(Messages.BOT_BOOTED)
+        await self.bot.change_presence(activity=discord.Game(f'SUICA {self.bot.version}'))
+
+    @commands.Cog.listener()
+    async def on_resumed(self):
+        log.info("Suica has been resumed?")
 
     # hot reloading all extensions
     @commands.is_owner()
