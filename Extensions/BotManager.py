@@ -27,6 +27,13 @@ class BotManager(commands.Cog):
     async def on_resumed(self):
         log.info("Suica has been resumed?")
 
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+        if isinstance(error, commands.CommandNotFound) or isinstance(error, commands.CheckFailure):
+            if ctx.message.content.count(f'{self.bot.prefix}') > 1:
+                return
+            await ctx.message.add_reaction("❓")
+
     # hot reloading all extensions
     @commands.is_owner()
     @commands.command(name="reload")
