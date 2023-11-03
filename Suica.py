@@ -2,10 +2,10 @@ import json
 import discord
 import logging
 import pkgutil
-from typing import Optional
 from discord.ext import commands
 
 import Extensions
+from Replies.Messages import Messages
 
 log = logging.getLogger(__name__)
 
@@ -16,6 +16,7 @@ class Bot(commands.Bot):
         self.backstage_channel = None
         self.prefix = "!"
         self.version = "3.0.0.a"
+        self.status_message = f"{self.prefix}help"
 
         # Load configuration
         try:

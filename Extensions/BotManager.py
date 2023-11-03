@@ -21,7 +21,7 @@ class BotManager(commands.Cog):
     async def on_ready(self):
         log.info("Suica has been booted!")
         await self.bot.get_channel(int(self.bot.backstage_channel)).send(Messages.BOT_BOOTED)
-        await self.bot.change_presence(activity=discord.CustomActivity(Messages.STATUS_MESSAGE.format(self.bot.version, self.bot.prefix)))
+        await self.bot.change_presence(activity=discord.CustomActivity(f'v{self.bot.version} || {self.bot.status_message}'))
 
     @commands.Cog.listener()
     async def on_resumed(self):
