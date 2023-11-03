@@ -26,6 +26,7 @@ class KeywordReply(commands.Cog):
                     (keyword, reply) = line.split(':', 1)
                     self.dictionary[keyword] = reply
             source.close()
+            log.info("Loaded keyword pairs from keywords.txt")
         except Exception as e:
             log.error("Failed to load keywords.txt: {}".format(e))
 
@@ -50,6 +51,43 @@ class KeywordReply(commands.Cog):
         else:
             self.blacklist.append(ctx.guild.id)
             await ctx.send(Messages.KEYWORD_REPLY_DISABLED.format(ctx.guild.name))
+
+    # add a keyword-reply pair and write to keywords.txt
+    @commands.command(name="addkw")
+    async def _add_kw(self, ctx, keyword, reply):
+        if keyword in self.dictionary.keys():
+            await ctx.send(Messages.KEYWORD_KEY_EXISTS)
+            return
+
+        self.dictionary[keyword] = reply
+
+        try:
+            with open('Assets/keywords.txt', 'a') as source:
+                source.write("\n{}:{}".format(keyword, reply))
+            source.close()
+        except Exception as e:
+            log.error("Failed to write to keywords.txt: {}".format(e))
+
+        await ctx.send(Messages.KEYWORD_REPLY_ADDED + "`{}: {}`".format(keyword, reply))
+
+    # remove a keyword-reply pair and write to keywords.txt
+    @commands.command(name="rmkw")
+    async def _remove_kw(self, ctx, key):
+        if key in self.dictionary.keys():
+            self.dictionary.pop(key)
+            await ctx.send(Messages.KEYWORD_REPLY_REMOVED + "`{}`".format(key))
+
+            # completely rewrite keywords.txt
+            try:
+                with open('Assets/keywords.txt', 'w') as source:
+                    for key in self.dictionary.keys():
+                        source.write("{}:{}".format(key, self.dictionary[key]))
+                source.close()
+            except Exception as e:
+                log.error("Failed to write to keywords.txt: {}".format(e))
+
+        else:
+            await ctx.send(Messages.KEYWORD_KEY_NOT_FOUND)
         
 
 async def setup(bot):

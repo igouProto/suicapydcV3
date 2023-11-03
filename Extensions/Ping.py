@@ -21,12 +21,14 @@ class Ping(commands.Cog):
 
         # Calculate latency
         bot_latency = round(self.bot.latency * 1000)
-        command_latency = round((t.created_at - ctx.message.created_at).total_seconds() * 1000)
+        command_latency = round(
+            (t.created_at - ctx.message.created_at).total_seconds() * 1000
+        )
 
-        if (ctx.voice_client):
+        if ctx.voice_client:
             voice_latency = round(ctx.voice_client.latency * 1000)
         else:
-            voice_latency = 'N/A'
+            voice_latency = "N/A"
 
         embed = PingEmbed(bot_latency, command_latency, voice_latency)
         await t.edit(content="", embed=embed)

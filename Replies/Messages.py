@@ -20,3 +20,9 @@ class Messages:
 
     # Ping messages
     PINGING = ':stopwatch: 正在測量........'
+
+    # Keyword reply messages
+    KEYWORD_KEY_EXISTS = ':x: 關鍵字已存在。'
+    KEYWORD_REPLY_ADDED = ':white_check_mark: 已新增關鍵字：'
+    KEYWORD_REPLY_REMOVED = ':white_check_mark: 已移除關鍵字：'
+    KEYWORD_KEY_NOT_FOUND = ':x: 找不到關鍵字。'
