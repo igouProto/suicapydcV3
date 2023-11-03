@@ -3,6 +3,7 @@ Base language module in Traditional Chinese
 """
 
 
+
 class Messages:
     # Generic system messages
     KEYWORD_REPLY_ENABLED = "已為**{}**開啟關鍵字回覆。"
@@ -12,3 +13,6 @@ class Messages:
     EXTENSION_RELOADING = ":warning: 正在重新載入所有模組..."
     EXTENSION_RELOADED = "✅ 已重新載入所有模組。"
     BOT_BOOTED = "✅ Suica已登入。"
+
+    # Default rich presence message
+    STATUS_MESSAGE = "v{} || {}help"
