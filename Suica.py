@@ -51,5 +51,5 @@ class Bot(commands.Bot):
             try:
                 await self.load_extension("Extensions." + name)
             except Exception as e:
-                self.error("Failed to load extension {}: {}".format(name, e))
+                log.error("Failed to load extension {}: {}".format(name, e))
         log.info("Extensions loaded")
