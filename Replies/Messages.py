@@ -3,7 +3,6 @@ Base language module in Traditional Chinese
 """
 
 
-
 class Messages:
     # Generic system messages
     KEYWORD_REPLY_ENABLED = "已為**{}**開啟關鍵字回覆。"
@@ -18,3 +17,6 @@ class Messages:
     # Rich presence messages
     DEFAULT_STATUS_MESSAGE = "v{} || {}help"
     PRESENCE_CHANGED = "✅ 已更新狀態訊息至：**{}**"
+
+    # Ping messages
+    PINGING = ':stopwatch: 正在測量........'

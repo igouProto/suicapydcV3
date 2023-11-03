@@ -39,6 +39,9 @@ class BotManager(commands.Cog):
             if ctx.message.content.count(f"{self.bot.prefix}") > 1:
                 return
             await ctx.message.add_reaction("❓")
+        else:
+            log.error(error)
+            await self.bot.get_channel(int(self.bot.backstage_channel)).send(f"```{error}```")
 
     # hot reloading all extensions
     @commands.is_owner()
