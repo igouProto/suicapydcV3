@@ -16,7 +16,7 @@ class Bot(commands.Bot):
         self.backstage_channel = None
         self.prefix = "!"
         self.version = "3.0.0.a"
-        self.status_message = f"{self.prefix}help"
+        self.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(self.version, self.prefix)
 
         # Load configuration
         try:

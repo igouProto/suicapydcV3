@@ -13,3 +13,7 @@ class Messages:
     EXTENSION_RELOADING = ":warning: 正在重新載入所有模組..."
     EXTENSION_RELOADED = "✅ 已重新載入所有模組。"
     BOT_BOOTED = "✅ Suica已登入。"
+
+    # Rich presence messages
+    DEFAULT_STATUS_MESSAGE = "v{} || {}help"
+    PRESENCE_CHANGED = "✅ 已更新狀態訊息至：**{}**"
