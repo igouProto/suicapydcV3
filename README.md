@@ -11,15 +11,36 @@ This rewrite (might be the last time) involves the following changes in design:
 - Add custom prefix support?
 
 ## (Crude) plan to rewrite the Jukebox, facts from the docs and some thoughts
-There would be 5 parts of the jukebox:
+There would be 4 parts of the jukebox:
 - Queue system that extends Wavelink's queue
 - Player that extends Wavelink's player to have more attributes (with the queue being one of them)
-- Custom errors
+- Custom errors in a class
 - The jukebox (command interface)
 
+## Functional Requirements of the Jukebox
+### Must Have
+- Connect / Disconnect
+- Play
+    - Searches for a song and:
+        - Enqueue it when something is playing
+        - Enqueue it
+- Pause / Resume
+- Display the queue
+    - Queue has to be paginated
+    - Tracks should be numbered
+- Loop Control
+    - Loop all
+    - Loop one
+- Volume Control
+
+### Good to have (including something that's made possible with new Wavelink)
+
+### Not important
+
+## Misc.
 ### Facts I read from the Wavelink docs
 - Played song would be popped from the queue (to be checked: pushed to the history queue?)
 - Loop all = populate queue with history queue
 
 ### Thoughts
-- Prev song command: dequeue from history queue, push that to queue, then skip
+- Prev song command: dequeue from history queue, push what was dequeued to queue, then skip (make player stop so it grabs the next song)
