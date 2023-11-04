@@ -11,5 +11,9 @@ class PingEmbed(discord.Embed):
         super().__init__(
             title=Constants.PING_TITLE,
             color=discord.Color.green(),
-            description=f"{Constants.PING_HEARTBEAT}: **{bot_latency}**ms\n{Constants.PING_REACTIONTIME}: **{command_latency}**ms\n{Constants.PING_VOICECLIENT}: **{voice_latency}**ms",
+            description=(
+                f"{Constants.PING_HEARTBEAT}: **{bot_latency}**ms\n"
+                f"{Constants.PING_REACTIONTIME}: **{command_latency}**ms\n"
+                f"{Constants.PING_VOICECLIENT}: **{voice_latency}**ms"
+            ),
         )

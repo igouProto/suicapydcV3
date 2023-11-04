@@ -22,7 +22,7 @@ class ChangePresence(commands.Cog):
     """
 
     @commands.is_owner()
-    @commands.command(name="presence", aliases=["cp", "pr"])
+    @commands.command(name="presence", aliases=["cp"])
     async def _change_presence(self, ctx, *, message):
         self.bot.status_message = message
 

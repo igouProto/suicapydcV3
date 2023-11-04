@@ -20,9 +20,11 @@ class BotManager(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         log.info("Suica has been booted!")
+        """
         await self.bot.get_channel(int(self.bot.backstage_channel)).send(
             Messages.BOT_BOOTED
         )
+        """
         await self.bot.change_presence(
             activity=discord.CustomActivity(self.bot.status_message)
         )
@@ -40,8 +42,11 @@ class BotManager(commands.Cog):
                 return
             await ctx.message.add_reaction("❓")
         else:
+            await ctx.message.add_reaction("❌")
             log.error(error)
-            await self.bot.get_channel(int(self.bot.backstage_channel)).send(f"```{error}```")
+            await self.bot.get_channel(int(self.bot.backstage_channel)).send(
+                f":x: {ctx.message.content}```{error, error.__traceback__}```"
+            )
 
     # hot reloading all extensions
     @commands.is_owner()
