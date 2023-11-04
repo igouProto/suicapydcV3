@@ -16,8 +16,12 @@ class Echo(commands.Cog):
         self.bot = bot
 
     @commands.command()
-    async def echo(self, ctx, destination, message):
-        await self.bot.get_channel(int(destination)).send(message)
+    async def echo(self, ctx, destination, message=None):
+        if message:
+            await self.bot.get_channel(int(destination)).send(message)
+        if ctx.message.attachments:
+            for attachment in ctx.message.attachments:
+                await self.bot.get_channel(int(destination)).send(attachment.url)
 
 
 async def setup(bot):
