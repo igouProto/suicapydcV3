@@ -26,7 +26,7 @@ class Ping(commands.Cog):
         )
 
         if ctx.voice_client:
-            voice_latency = round(ctx.voice_client.latency * 1000)
+            voice_latency = round(ctx.voice_client.ping)
         else:
             voice_latency = "N/A"
 

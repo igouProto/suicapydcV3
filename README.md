@@ -16,6 +16,7 @@ There would be 4 parts of the jukebox:
 - Player that extends Wavelink's player to have more attributes (with the queue being one of them)
 - Custom errors in a class
 - The jukebox (command interface)
+- Player should be the only one accessing the Queue
 
 ## Functional Requirements of the Jukebox
 ### Must Have
