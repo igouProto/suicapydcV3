@@ -162,6 +162,7 @@ cython_debug/
 # Misc
 .DS_Store
 keywords.txt
+keywords-*.txt
 .vscode/
 config.json
 *.jar
