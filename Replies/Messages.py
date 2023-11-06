@@ -27,6 +27,11 @@ class Messages:
     KEYWORD_REPLY_ADDED = ':white_check_mark: 已新增關鍵字：'
     KEYWORD_REPLY_REMOVED = ':white_check_mark: 已移除關鍵字：'
     KEYWORD_KEY_NOT_FOUND = ':x: 找不到關鍵字。'
+    KEYWORD_GUILD_NOT_FOUND = ':x: 找不到此伺服器的詞庫。可以使用`{}addkw`新增關鍵字。'
+    KEYWORD_REPLY_RELOADED = ':white_check_mark: 匯入詞庫成功。'
+    KEYWORD_REPLY_INVALID_FILE = ':x: 詞庫檔案無效。檔名必須為`keywords.txt`。'
+    KEYWORD_REPLY_NO_FILE = ':x: 找不到詞庫檔案。'
+    KEYWORD_REPLY_MISSING_ARGUMENTS = ':information_source: 指令格式：`{}addkw "關鍵字" "回覆"`'
 
     # Jukebox messages
     JUKEBOX_JOIN = ":white_check_mark: 已加入語音頻道：**{}**。" # 指令已綁定至此頻道。"
