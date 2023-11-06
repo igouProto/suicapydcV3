@@ -15,7 +15,7 @@ class Bot(commands.Bot):
         self.token = ''
         self.backstage_channel = None
         self.prefix = "!"
-        self.version = "3.0.0.a"
+        self.version = "3.0-alpha"
         self.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(self.version, self.prefix)
 
         # Load configuration
