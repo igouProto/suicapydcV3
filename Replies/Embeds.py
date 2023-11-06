@@ -96,6 +96,10 @@ class JukeboxEmbeds:
             self.set_footer(text=footer)
 
 
+class OmikijiEmbeds:
+    pass
+
+
 # Some helper functions for building the embeds
 class Helpers:
     fallback_url = "https://127.0.0.1"
