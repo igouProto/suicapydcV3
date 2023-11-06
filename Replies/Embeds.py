@@ -2,8 +2,7 @@ from time import localtime, strftime
 import discord
 
 from Extensions.OmikujiHelpers.Omikuji import FortuneResult
-from .EmbedStrings import Constants
-from .Messages import Messages
+from .Strings import Messages, EmbedStrings
 from Extensions.JukeboxHelpers.Player import Player
 
 import wavelink
@@ -11,27 +10,43 @@ import wavelink
 from discord.ext import commands
 
 """
-Collection of embeds for the bot
+Collection of embeds of Suica.
+PingEmbed is the embed for the ping command.
+JukeboxEmbeds contains embeds associated with the jukebox, including a nowplay display, a queue display, and a new song display.
+OmikujiEmbeds contains embeds for the omikuji command.
+Helpers is a collection of helper functions that might be useful when building embeds.
 """
 
 
 class PingEmbed(discord.Embed):
-    def __init__(self, bot_latency, command_latency, voice_latency):
+    """
+    Embed for the ping command. Takes in the bot latency, command latency, and voice latency as parameters.
+    """
+
+    def __init__(self, bot_latency: int, command_latency: int, voice_latency: int):
         super().__init__(
-            title=Constants.PING_TITLE,
+            title=EmbedStrings.PING_TITLE,
             color=discord.Color.green(),
             description=(
-                f"{Constants.PING_HEARTBEAT}: **{bot_latency}**ms\n"
-                f"{Constants.PING_REACTIONTIME}: **{command_latency}**ms\n"
-                f"{Constants.PING_VOICECLIENT}: **{voice_latency}**ms"
+                f"{EmbedStrings.PING_HEARTBEAT}: **{bot_latency}**ms\n"
+                f"{EmbedStrings.PING_REACTIONTIME}: **{command_latency}**ms\n"
+                f"{EmbedStrings.PING_VOICECLIENT}: **{voice_latency}**ms"
             ),
         )
 
 
 class JukeboxEmbeds:
+    """
+    Collection of embeds associated with the jukebox.
+    """
+
     color = discord.Color.red()
 
     class NowPlayEmbed(discord.Embed):
+        """
+        Embed for displaying the song currently playing in the guild.
+        """
+
         def __init__(self, guild: discord.Guild, player: Player):
             super().__init__(
                 color=JukeboxEmbeds.color,
@@ -48,15 +63,21 @@ class JukeboxEmbeds:
             self.title = f"{title}"
             self.url = uri
             self.description = f"{progress_display}  •  {volume_display}"
-            self.set_author(name=Constants.JUKEBOX_NOWPLAY_TITLE, icon_url=guild.icon)
+            self.set_author(
+                name=EmbedStrings.JUKEBOX_NOWPLAY_TITLE, icon_url=guild.icon
+            )
             self.set_thumbnail(url=thumbnail)
 
             if player and player.is_looping_one:
                 self.set_footer(
-                    text=Constants.JUKEBOX_LOOP_COUNT.format(player.loop_count)
+                    text=EmbedStrings.JUKEBOX_LOOP_COUNT.format(player.loop_count)
                 )
 
     class NewSongEmbed(discord.Embed):
+        """
+        Embed for displaying a new song added to the queue.
+        """
+
         def __init__(self, ctx: commands.context, track: wavelink.YouTubeTrack):
             super().__init__(
                 color=JukeboxEmbeds.color,
@@ -73,59 +94,104 @@ class JukeboxEmbeds:
                 )
 
             self.set_author(
-                name=f"{Constants.JUKEBOX_NEW_SONG_ADDED.format(ctx.author.display_name)}",
+                name=f"{EmbedStrings.JUKEBOX_NEW_SONG_ADDED.format(ctx.author.display_name)}",
                 icon_url=ctx.author.display_avatar.url,
             )
             self.set_thumbnail(url=track.thumbnail)
 
     class QueueEmbed(NowPlayEmbed):
-        def __init__(self, guild: discord.Guild, player: Player, page: int=1):
+        """
+        Embed for displaying the song currently playing in the guild + the queue.
+        Supports pagination.
+        """
+
+        def __init__(self, guild: discord.Guild, player: Player, page: int = 1):
             super().__init__(guild, player)
 
             raw_page, page_num, max_page = player.get_paginated_queue(page=page)
-            
+
             # compose a list of songs in the queue
             processed_page = Helpers().process_raw_page(raw_page)
 
             # if the list is empty, display a message instead
             if processed_page == "":
-                processed_page = Constants.JUKEBOX_NOTHING_IN_QUEUE
+                processed_page = EmbedStrings.JUKEBOX_NOTHING_IN_QUEUE
 
-            self.add_field(name=f"{Constants.JUKEBOX_QUEUE_UPNEXT}", value=processed_page, inline=False)
+            self.add_field(
+                name=f"{EmbedStrings.JUKEBOX_QUEUE_UPNEXT}",
+                value=processed_page,
+                inline=False,
+            )
 
-            footer = Constants.JUKEBOX_PAGINATION.format(page_num, max_page)
+            footer = EmbedStrings.JUKEBOX_PAGINATION.format(page_num, max_page)
             if player.autoplay:
-                footer += f"  •  {Constants.JUKEBOX_AUTOPLAY_ENABLED}"
+                footer += f"  •  {EmbedStrings.JUKEBOX_AUTOPLAY_ENABLED}"
             self.set_footer(text=footer)
 
 
 class OmikujiEmbeds:
+    """
+    Embeds for the omikuji command. Displays the omikuji result.
+    """
+
     color = discord.Color.orange()
 
     class Omikuji(discord.Embed):
         def __init__(self, ctx: commands.Context, result: FortuneResult):
             super().__init__(
                 color=OmikujiEmbeds.color,
-                title=f"{result.fortune}", 
-                description=f"{result.determination}"
+                title=f"{result.fortune}",
+                description=f"{result.determination}",
             )
 
-            self.set_author(name=Constants.OMIKUJI_TITLE.format(ctx.author.display_name), icon_url=ctx.author.display_avatar.url)
+            self.set_author(
+                name=EmbedStrings.OMIKUJI_TITLE.format(ctx.author.display_name),
+                icon_url=ctx.author.display_avatar.url,
+            )
 
-            self.add_field(name=Constants.OMIKUJI_DIRECTION, value=result.direction, inline=True)
-            self.add_field(name=Constants.OMIKUJI_GACHAINDEX, value=f"☆ {result.gacha_index}", inline=True)
-            self.add_field(name=Constants.OMIKUJI_CHARGEINDEX, value=f"☆ {result.charge_index}", inline=True)
-            self.add_field(name=Constants.OMIKUJI_LUCKYNUMBER, value=result.lucky_number, inline=True)
-            self.add_field(name=Constants.OMIKUJI_LUCKYCOLOR, value=result.lucky_color, inline=True)
+            self.add_field(
+                name=EmbedStrings.OMIKUJI_DIRECTION, value=result.direction, inline=True
+            )
+            self.add_field(
+                name=EmbedStrings.OMIKUJI_GACHAINDEX,
+                value=f"☆ {result.gacha_index}",
+                inline=True,
+            )
+            self.add_field(
+                name=EmbedStrings.OMIKUJI_CHARGEINDEX,
+                value=f"☆ {result.charge_index}",
+                inline=True,
+            )
+            self.add_field(
+                name=EmbedStrings.OMIKUJI_LUCKYNUMBER,
+                value=result.lucky_number,
+                inline=True,
+            )
+            self.add_field(
+                name=EmbedStrings.OMIKUJI_LUCKYCOLOR,
+                value=result.lucky_color,
+                inline=True,
+            )
 
-            self.set_footer(text=Constants.OMIKUJI_FOOTER.format(result.serial_number, strftime('%Y/%m/%d', localtime())))
+            self.set_footer(
+                text=EmbedStrings.OMIKUJI_FOOTER.format(
+                    result.serial_number, strftime("%Y/%m/%d", localtime())
+                )
+            )
 
 
 # Some helper functions for building the embeds
 class Helpers:
+    """
+    Collection of helper functions that might be useful when building embeds.
+    """
+
     fallback_url = "https://127.0.0.1"
 
     def time_format(self, time):
+        """
+        Format the time in seconds to xx:xx:xx format.
+        """
         minutes, seconds = divmod(
             int(time), 60
         )  # minutes = duration / 60, second = duration % 60
@@ -141,6 +207,9 @@ class Helpers:
         return ":".join(duration)
 
     def title_parser(self, raw_title):
+        """
+        Escapes all the asterisks in the title to avoid Discord making the title italic.
+        """
         if "*" in raw_title:
             ind = raw_title.index("*")
             return_title = raw_title[:ind] + "\\" + raw_title[ind:]
@@ -149,6 +218,10 @@ class Helpers:
             return raw_title
 
     def playback_status(self, player: Player):
+        """
+        Displays the playback status of the player.
+        Returns a tuple of uri, title, progress_display, volume_display, thumbnail.
+        """
         if player:
             track: wavelink.Playable | wavelink.YouTubeTrack = player.current
         else:
@@ -156,7 +229,13 @@ class Helpers:
 
         # if nothing is playing
         if not track:
-            return self.fallback_url, f"{Constants.JUKEBOX_NOTHING_PLAYING}", "-- / --", "--", self.fallback_url
+            return (
+                self.fallback_url,
+                f"{EmbedStrings.JUKEBOX_NOTHING_PLAYING}",
+                "-- / --",
+                "--",
+                self.fallback_url,
+            )
 
         title = self.title_parser(track.title)
         uri = track.uri
@@ -194,6 +273,9 @@ class Helpers:
         return uri, title, progress_display, volume_display, thumbnail
 
     def process_raw_page(self, raw_page):
+        """
+        Convert the raw page of songs into a list of songs that contains the index, song title, and duration.
+        """
         processed_page = ""
         index = 1
         for item in raw_page:

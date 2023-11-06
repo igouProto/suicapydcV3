@@ -4,9 +4,11 @@ import discord
 from discord.ext import commands
 from Extensions.JukeboxHelpers.Errors import *
 from Extensions.JukeboxHelpers.Player import Player
-from Replies.Messages import Messages
+from Replies.Strings import Messages
 from Replies.Embeds import JukeboxEmbeds
-from Replies.Embeds import Helpers # TODO: Consider refactoring this to a separate module
+from Replies.Embeds import (
+    Helpers,
+)  # TODO: Consider refactoring this to a separate module
 
 import wavelink
 
@@ -14,7 +16,7 @@ import wavelink
 log = logging.getLogger(__name__)
 
 """
-The main command interface for the jukebox
+The main command interface for the jukebox.
 """
 
 
@@ -42,11 +44,11 @@ class Jukebox(commands.Cog):
         log.info(f"Connected to lavalink node {node.id}")
 
     # Automatically disconnect from voice channel when everyone leaves
-    @commands.Cog.listener('on_voice_state_update')
+    @commands.Cog.listener("on_voice_state_update")
     async def auto_disconnect(self, member, before: discord.VoiceState, after):
         if not before.channel:
             return
-        
+
         if self.bot.user in before.channel.members and len(before.channel.members) <= 1:
             player: Player = await self.get_player(before.channel.guild)
             await player.teardown()
@@ -70,7 +72,9 @@ class Jukebox(commands.Cog):
                 player = Player()
                 player.bounded_channel = object.channel
             return player
-        elif isinstance(object, discord.Guild): # Access a player via guild. This would only happen on voice state update
+        elif isinstance(
+            object, discord.Guild
+        ):  # Access a player via guild. This would only happen on voice state update
             player = self.node.get_player(object.id)
             return player
 
@@ -84,7 +88,7 @@ class Jukebox(commands.Cog):
             if not payload.player.autoplay:
                 await payload.player.advance()
             else:
-                pass # to be implemented
+                pass  # to be implemented
         except QueueIsEmpty:
             pass
             # await payload.player.bounded_channel.send(Messages.JUKEBOX_NO_MORE_SONGS.format(self.bot.prefix))
@@ -235,14 +239,14 @@ class Jukebox(commands.Cog):
 
         player.go_back()
         if player.is_playing():
-            await player.stop() # have to do it here for the event listener to pick up
+            await player.stop()  # have to do it here for the event listener to pick up
         else:
             await player.advance()
 
         if player.is_looping_one:
             await player.toggle_loop_one(ctx)
             await ctx.send(Messages.JUKEBOX_LOOP_ONE_DISABLED_AUTO)
-        
+
         await ctx.message.add_reaction("⏮️")
         await ctx.message.add_reaction("✅")
 
@@ -363,7 +367,6 @@ class Jukebox(commands.Cog):
             pass
 
         await ctx.send(Messages.JUKEBOX_SONG_REMOVED.format(song_removed.title))
-
 
     @commands.command(name="clear", aliases=["clr", "cl"])
     async def _clear(self, ctx, history: str = None):

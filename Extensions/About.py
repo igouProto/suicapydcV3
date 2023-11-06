@@ -1,14 +1,14 @@
 import logging
 import discord
 from discord.ext import commands
-from Replies.Messages import Messages
+from Replies.Strings import Messages
 import Suica
 
 # logging
 log = logging.getLogger(__name__)
 
 """
-About the bot. I'll just hardcode the embed here.
+About Suica!
 """
 
 

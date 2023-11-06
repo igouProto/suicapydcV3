@@ -1,6 +1,6 @@
 import logging
 from discord.ext import commands
-from Replies.Messages import Messages
+from Replies.Strings import Messages
 from Replies.Embeds import PingEmbed
 
 # logging

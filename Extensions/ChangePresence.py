@@ -1,13 +1,13 @@
 import logging
 import discord
 from discord.ext import commands
-from Replies.Messages import Messages
+from Replies.Strings import Messages
 
 # logging
 log = logging.getLogger(__name__)
 
 """
-Command for changing the bot's presence.
+Command for changing Suica's presence.
 """
 
 
@@ -28,7 +28,9 @@ class ChangePresence(commands.Cog):
 
         # Revert to default
         if message == "default":
-            self.bot.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(self.bot.version, self.bot.prefix)
+            self.bot.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(
+                self.bot.version, self.bot.prefix
+            )
 
         await self.bot.change_presence(
             activity=discord.CustomActivity(self.bot.status_message)
