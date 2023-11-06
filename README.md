@@ -16,7 +16,8 @@ There would be 4 parts of the jukebox:
 - Player that extends Wavelink's player to have more attributes (with the queue being one of them)
 - Custom errors in a class
 - The jukebox (command interface)
-- Player should be the only one accessing the Queue
+- Player should be the only one accessing the Queue with defined functnios
+- Queue should have full control of itself and only allow interaction from the outside via functions it provide
 
 ## Functional Requirements of the Jukebox
 ### Must Have
@@ -39,8 +40,8 @@ There would be 4 parts of the jukebox:
 ### Not important
 
 ## Misc.
-### Facts I read from the Wavelink docs
-- Played song would be popped from the queue (to be checked: pushed to the history queue?)
+### Facts I read from the Wavelink docs + observed
+- Played song would be popped from the queue and pushed to the history queue
 - Loop all = populate queue with history queue
 
 ### Thoughts
