@@ -1,3 +1,4 @@
+from enum import auto
 import logging
 import discord
 from discord.ext import commands
@@ -40,18 +41,38 @@ class Jukebox(commands.Cog):
     async def on_wavelink_node_ready(self, node: wavelink.Node):
         log.info(f"Connected to lavalink node {node.id}")
 
+    # Automatically disconnect from voice channel when everyone leaves
+    @commands.Cog.listener('on_voice_state_update')
+    async def auto_disconnect(self, member, before: discord.VoiceState, after):
+        if not before.channel:
+            return
+        
+        if self.bot.user in before.channel.members and len(before.channel.members) <= 1:
+            player: Player = await self.get_player(before.channel.guild)
+            await player.teardown()
+
+            # send a message to the bounded channel
+            try:
+                await player.bounded_channel.send(Messages.JUKEBOX_AUTO_DISCONNECTED)
+            except:
+                return
+
     # Helper functions
     # Get player from guild, create one if not found
-    async def get_player(self, ctx):
+    async def get_player(self, object: commands.Context | discord.Guild):
         """
         Returns the player associated with the guild relevant command was invoked from.
         """
-        player = self.node.get_player(ctx.guild.id)
-        if not player:
-            # make a new player
-            player = Player()
-            player.bounded_channel = ctx.channel
-        return player
+        if isinstance(object, commands.Context):
+            player = self.node.get_player(object.guild.id)
+            if not player:
+                # make a new player
+                player = Player()
+                player.bounded_channel = object.channel
+            return player
+        elif isinstance(object, discord.Guild): # Access a player via guild. This would only happen on voice state update
+            player = self.node.get_player(object.id)
+            return player
 
     # Get the next song in queue when the current song ends
     @commands.Cog.listener()
