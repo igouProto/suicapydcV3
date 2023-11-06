@@ -3,7 +3,7 @@ import os
 import sys
 import discord
 from discord.ext import commands
-from Replies.Messages import Messages
+from Replies.Strings import Messages
 import Suica
 
 # logging
@@ -37,7 +37,6 @@ class BotManager(commands.Cog):
     async def on_resumed(self):
         log.info("Suica has been resumed?")
 
-
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         await ctx.message.add_reaction("❌")
@@ -51,10 +50,14 @@ class BotManager(commands.Cog):
         else:
             raise error
 
-    # hot reloading all extensions
+    # Commands
     @commands.is_owner()
-    @commands.command(name="reload")
+    @commands.command(name="reload", disabled=True)
     async def _reload(self, ctx):
+        """
+        Hot reloads all extensions.
+        Currently disabled because it doesn't play well with the jukebox.
+        """
         await ctx.send(Messages.EXTENSION_RELOADING)
         # Get the list of extensions
         extentions = self.bot.extensions.copy()
@@ -82,16 +85,23 @@ class BotManager(commands.Cog):
     @commands.is_owner()
     @commands.command(name="restart")
     async def _restart(self, ctx):
+        """
+        Restarts the bot.
+        """
         await ctx.send(Messages.BOT_RESTARTING)
         # await self.bot.close()
         os.execl(sys.executable, sys.executable, *sys.argv)
-    
+
     # shutdown the bot (temporarily here cuz the restart command does not play well with discord's login system)
     @commands.is_owner()
     @commands.command(name="shutdown")
     async def _shutdown(self, ctx):
+        """
+        Shuts down the bot and logs it out.
+        """
         await ctx.send("Shutting down...")
         await self.bot.close()
+
 
 async def setup(bot):
     await bot.add_cog(BotManager(bot))

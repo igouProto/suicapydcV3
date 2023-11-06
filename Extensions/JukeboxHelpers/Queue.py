@@ -1,6 +1,9 @@
 import wavelink
 from .Errors import *
 
+"""
+
+"""
 
 class Queue(wavelink.Queue):
     def __init__(self):
