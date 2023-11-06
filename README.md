@@ -37,6 +37,7 @@ Suica has a sort of out-of-the-box set up experience when you first start it up.
 - The bot's token
 - Default command prefix
 - ID of the channel you want the backlog messages go to
+
 The settings will be written to Assets/config.json. We recommend backing up this file.
 
 ## A quick list of function restoration status
