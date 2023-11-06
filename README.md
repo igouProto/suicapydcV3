@@ -1,48 +1,79 @@
 # suicapydcV3
-I'm forgetting Python so I'm rewriting Suica once again.
+This is my second rewrite of SUICA, the Discord bot that I made years ago to learn Python and programming in general.
 
-## Some notes to myself:
-This rewrite (might be the last time) involves the following changes in design:
-- Messages from Suica are now in Reples so no hard coding!
-- Embeds should be implemented in the same way
-- Music player embeds should be a separate module
-- Extensions/Cogs now live in the Extensions directory
-- Extensions should not be monolithic anymore
-- Add custom prefix support?
+## What is SUICA?
+SUICA or Sugoi Ultra Intelligent Chat Assistant is a Discord bot packed with music playback and some other features. Named after Ibuki Suika from the Touhou Project series (not to be confused with Suica, a prepaid rechargeable contactless smart card in Japan). It is currently designed for self-hosting. It currently speaks Traditional Chinese, but under the new structure it's possible to add multi language support.
 
-## (Crude) plan to rewrite the Jukebox, facts from the docs and some thoughts
-There would be 4 parts of the jukebox:
-- Queue system that extends Wavelink's queue
-- Player that extends Wavelink's player to have more attributes (with the queue being one of them)
-- Custom errors in a class
-- The jukebox (command interface)
-- Player should be the only one accessing the Queue with defined functnios
-- Queue should have full control of itself and only allow interaction from the outside via functions it provide
+## Why the rewrite?
+A few reasons:
+- I abandoned the old code for too long that it's becoming difficult understanding what I was doing, hence prevents me from extending it
+- The old code was a hot mess:
+    - No documentation
+    - Extensions / Cogs are monolithic and scattered everywhere. Me back then did not know how to organize modules
+    - Weird to no logic for grouping the commands
+    - and so on. It was a mess anyway.
+- The libraries I use had gone through many breaking changes and I'm afraid of older versions going obsolete
+- I hadn't done Python for a while so I need a refresher
+- ...etc
 
-## Functional Requirements of the Jukebox
-### Must Have
-- Connect / Disconnect
-- Play
-    - Searches for a song and:
-        - Enqueue it when something is playing
-        - Enqueue it
-- Pause / Resume
-- Display the queue
-    - Queue has to be paginated
-    - Tracks should be numbered
-- Loop Control
-    - Loop all
-    - Loop one
-- Volume Control
+## Okay Cool, how do I run it?
+### Prerequisites
+- Python > 3.10
+- Java
+- A copy of Lavalink.jar (put it in the Lavalink dir)
+- Your own Discord app and bot token
 
-### Good to have (including something that's made possible with new Wavelink)
+### Installation and execution
+(Rough steps, to be updated with mode details soon)
+1. Download the code by either cloning it or download the zip
+2. In Suica's directory, place your copy of Lavalink.jar inside ./Lavalink
+3. Create a Python virtual environment and activate it
+4. Install required packages listed in requirements.txt
+5. In a separate console, launch Lavalink.jar with `java -jar Lavalink.jar` (Lavalink must be running for the jukebox to work)
+6. Launch Suica with `python Main.py`
 
-### Not important
+### Initial Configuration
+Suica has a sort of out-of-the-box set up experience when you first start it up. In the console, you'll be prompted to enter:
+- The bot's token
+- Default command prefix
+- ID of the channel you want the backlog messages go to
+The settings will be written to Assets/config.json. We recommend backing up this file.
 
-## Misc.
-### Facts I read from the Wavelink docs + observed
-- Played song would be popped from the queue and pushed to the history queue
-- Loop all = populate queue with history queue
+## A quick list of function restoration status
+### Restored
+- Message echoing
+- Keyword reply
+- Omikuji function
+- Ping (now with voice latency)
+- User manual
+- Most jukebox's features
 
-### Thoughts
-- Prev song command: dequeue from history queue, push what was dequeued to queue, then skip (make player stop so it grabs the next song)
+### New Features
+- Jukebox:
+    - Moves a song in the queue to the top
+    - New queue display that implements proper pagination
+- Adding and managing custom keyword-reply pairs for guilds
+- Messages and strings are sepatated in their own files (for potential multi-langugage support)
+
+### Not yet (or may not be) restored / implemented
+- Ship construction recipe generator for Kancolle (wow this is an old feature)
+- Stocks function powered by YFinance
+- Fake NKODICE minigame
+- Jukebox features:
+    - Reaction based panel buttons
+    - Player seeking (seek, ff/rwd, replay)
+    - Saving info of the current track to DM
+    - Exporting / importing queue
+    - Access to history queue
+- Admin features:
+    - Purge / bulk removing messages from chat
+    - Update announcement
+- Doodads:
+    - Calculator powered by math.js
+
+## Some future works
+- More documentations! This is a crude readme at the moment without too many helpful stuff
+- Study Docker to see how can I put Suica in a container
+- Restore more function and implement new ones (of course)
+
+# EOF

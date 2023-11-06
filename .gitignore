@@ -166,4 +166,4 @@ keywords-*.txt
 .vscode/
 config.json
 *.jar
-notes.txt
+notes.*
