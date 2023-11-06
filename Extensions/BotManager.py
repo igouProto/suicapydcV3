@@ -33,8 +33,11 @@ class BotManager(commands.Cog):
     async def on_resumed(self):
         log.info("Suica has been resumed?")
 
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
+        await ctx.message.add_reaction("❌")
+
         if isinstance(error, commands.CommandNotFound) or isinstance(
             error, commands.CheckFailure
         ):
@@ -42,11 +45,7 @@ class BotManager(commands.Cog):
                 return
             await ctx.message.add_reaction("❓")
         else:
-            await ctx.message.add_reaction("❌")
-            log.error(error)
-            await self.bot.get_channel(int(self.bot.backstage_channel)).send(
-                f":x: {ctx.message.content}```{error, error.__traceback__}```"
-            )
+            raise error
 
     # hot reloading all extensions
     @commands.is_owner()
