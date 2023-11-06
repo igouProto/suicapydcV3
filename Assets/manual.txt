@@ -38,7 +38,7 @@
 **.vol**：調整音量(0-100)。（例：`.vol 75`）
 
 [自訂關鍵字]
-**.addkw**：加入伺服器關鍵字。（例：`.kwadd 好油喔 Peko`, `.kwadd "it's me" "pekora!"`） 
+**.addkw**：加入伺服器關鍵字。（例：`.addkw 好油喔 Peko`, `.addkw "it's me" "pekora!"`） 
 **.rmkw**：移除伺服器關鍵字。 （例：`.rmkw 好油喔`）
 **.backupkw**：下載伺服器詞庫檔。
 
