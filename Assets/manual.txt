@@ -1,0 +1,46 @@
+[奇怪的基本功能]
+~~**.omikuji** (.omkj)：求籤！每人每天只會有一種結果。~~ (恢復中)
+**.pekofy**：加入語尾助詞peko！可以把頻道裡最後一句話peko化。
+（或是帶入-self參數，把自己最後講過的一句話peko化。例：`.pekofy -self`）
+（或是在指令後方輸入你想peko化的句子peko。例：`.pekofy 好油喔`）
+
+[其他有的沒的]
+**.manual** (.man, .help)：顯示說明書（文長注意）。
+**.about**：關於SUICA。
+**.ping**：意義不明，覺得萃香怪怪的就測一下吧。
+
+[音樂播放器指令]
+**.join**：把萃香叫到你所身處的語音頻道。
+**.disconnect** (.dc)：讓萃香停止播放歌曲，清除播放清單，並離開語音頻道。
+
+**.play** (.p)：播放曲目，或將曲目新增至佇列。
+使用範例：`.play https://youtu.be/_KTwDH_KQ_g`, `.play ぺこらんだむぶれいん！`
+也可以新增播放清單（例：`.play https://www.youtube.com/playlist?list=PL9jli3ZqRhJD13ORC2CUTEYnjeZt9KMPb`）。
+
+**.nowplay** (.np)：顯示現正播放中的歌曲資訊。
+
+**.queue** (.q)：查看播放清單。在指令後方輸入頁碼即可翻頁（例：`.queue 2`），或是輸入 ">" 或 "<" 快速翻頁（例：`.queue >`, `.queue <`, `.queue >>`）。
+**.top** (.tp)：將指定曲目移至播放清單頂部。推薦搭配.queue使用。（例：`.top 5`）
+加入 -s 可以跳過正在播放的歌曲。（例：`.top 5 -s`）
+**.remove** (.rm)：刪除指定曲目。推薦搭配.queue使用。（例：`.rm 5`）
+**.clear** (.cl)：清除播放清單。
+
+**.skip** (.sk)：下一首。
+**.prev** (.pr)：上一首。
+
+**.pause** (.pa)：暫停。
+**.resume** (.re)：繼續。
+
+**.loop** (.lp)：開啟/關閉單曲循環。
+**.loopall** (.lpa)：開啟/關閉全曲循環。
+**.shuffle** (.sh)：隨機排列播放清單。
+
+**.vol**：調整音量(0-100)。（例：`.vol 75`）
+
+[自訂關鍵字]
+**.addkw**：加入伺服器關鍵字。（例：`.kwadd 好油喔 Peko`, `.kwadd "it's me" "pekora!"`） 
+**.rmkw**：移除伺服器關鍵字。 （例：`.rmkw 好油喔`）
+**.backupkw**：下載伺服器詞庫檔。
+
+`說明書版本 v3.0-alpha`
+註：3.0前有但這裡沒寫的功能，可能是還沒移植好，~~也可能不會移植。~~
