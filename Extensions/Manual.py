@@ -19,6 +19,8 @@ class Manual(commands.Cog):
         """
         Display manual from file.
         """
+        with open("Assets/manual.txt", "r", encoding="utf-8") as f:
+            await ctx.send(f.read())
 
 
 async def setup(bot):
