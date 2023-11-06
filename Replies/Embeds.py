@@ -1,4 +1,7 @@
+from time import localtime, strftime
 import discord
+
+from Extensions.OmikujiHelpers.Omikuji import FortuneResult
 from .EmbedStrings import Constants
 from .Messages import Messages
 from Extensions.JukeboxHelpers.Player import Player
@@ -94,6 +97,28 @@ class JukeboxEmbeds:
             if player.autoplay:
                 footer += f"  •  {Constants.JUKEBOX_AUTOPLAY_ENABLED}"
             self.set_footer(text=footer)
+
+
+class OmikujiEmbeds:
+    color = discord.Color.orange()
+
+    class Omikuji(discord.Embed):
+        def __init__(self, ctx: commands.Context, result: FortuneResult):
+            super().__init__(
+                color=OmikujiEmbeds.color,
+                title=f"{result.fortune}", 
+                description=f"{result.determination}"
+            )
+
+            self.set_author(name=Constants.OMIKUJI_TITLE.format(ctx.author.display_name), icon_url=ctx.author.display_avatar.url)
+
+            self.add_field(name=Constants.OMIKUJI_DIRECTION, value=result.direction, inline=True)
+            self.add_field(name=Constants.OMIKUJI_GACHAINDEX, value=f"☆ {result.gacha_index}", inline=True)
+            self.add_field(name=Constants.OMIKUJI_CHARGEINDEX, value=f"☆ {result.charge_index}", inline=True)
+            self.add_field(name=Constants.OMIKUJI_LUCKYNUMBER, value=result.lucky_number, inline=True)
+            self.add_field(name=Constants.OMIKUJI_LUCKYCOLOR, value=result.lucky_color, inline=True)
+
+            self.set_footer(text=Constants.OMIKUJI_FOOTER.format(result.serial_number, strftime('%Y/%m/%d', localtime())))
 
 
 # Some helper functions for building the embeds

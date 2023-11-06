@@ -19,3 +19,12 @@ class Constants():
     JUKEBOX_QUEUE_UPNEXT_TIME = "總時長 {}"
     JUKEBOX_QUEUE_UPNEXT_COUNT = "共 {} 首"
     JUKEBOX_AUTOPLAY_ENABLED = "已啟用自動播放。將在播放清單結束後自動播放推薦歌曲。"
+
+    # Omikuji
+    OMIKUJI_TITLE = "{} 的每日占卜結果～"
+    OMIKUJI_DIRECTION = "歐洲方位"
+    OMIKUJI_GACHAINDEX = "抽卡指數"
+    OMIKUJI_CHARGEINDEX = "課金指數"
+    OMIKUJI_LUCKYNUMBER = "幸運數字"
+    OMIKUJI_LUCKYCOLOR = "幸運色"
+    OMIKUJI_FOOTER = "天不靈地不理御神籤第{}號。{}"
