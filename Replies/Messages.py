@@ -5,9 +5,8 @@ Base language module in Traditional Chinese
 
 class Messages:
     # Generic system messages
-    KEYWORD_REPLY_ENABLED = "✅ 已為**{}**開啟關鍵字回覆。"
-    KEYWORD_REPLY_DISABLED = "✅ 已為**{}**關閉關鍵字回覆。"
-
+    BOT_RESTARTING = ":warning: 正在重新啟動..."
+    
     # Admin messages
     EXTENSION_RELOADING = ":warning: 正在重新載入所有模組..."
     EXTENSION_RELOADED = "✅ 已重新載入模組({}/{})。"
@@ -22,6 +21,8 @@ class Messages:
     PINGING = ':stopwatch: 正在測量........'
 
     # Keyword reply messages
+    KEYWORD_REPLY_ENABLED = "✅ 已為**{}**開啟關鍵字回覆。"
+    KEYWORD_REPLY_DISABLED = "✅ 已為**{}**關閉關鍵字回覆。"
     KEYWORD_KEY_EXISTS = ':x: 關鍵字已存在。'
     KEYWORD_REPLY_ADDED = ':white_check_mark: 已新增關鍵字：'
     KEYWORD_REPLY_REMOVED = ':white_check_mark: 已移除關鍵字：'
@@ -44,3 +45,8 @@ class Messages:
     JUKEBOX_SONG_REMOVED = ":white_check_mark: 已移除歌曲：**{}**"
     JUKEBOX_AUTOPLAY_ENABLED = ":information_source: 已啟用自動播放。將在播放清單結束後自動播放推薦歌曲。"
     JUKEBOX_AUTOPLAY_DISABLED = ":information_source: 已停用自動播放。"
+
+    # About description template
+    ABOUT = "ID：{}\n 應用程式名稱：{}\n 擁有者：{}\n 誕生時間：{}\n作者：igouProto [(GitHub!)](https://github.com/igouProto/suicapydc)"
+    ABOUT_FOOTER = "SUICA v{} • 使用 discord.py 及 wavelink 開發。"
+    ABOUT_TITLE = "關於 SUICA"
