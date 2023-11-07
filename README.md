@@ -57,9 +57,6 @@ The settings will be written to Assets/config.json. We recommend backing up this
 - Messages and strings are sepatated in their own files (for potential multi-langugage support)
 
 ### Not yet (or may not be) restored / implemented
-- Ship construction recipe generator for Kancolle (wow this is an old feature)
-- Stocks function powered by YFinance
-- Fake NKODICE minigame
 - Jukebox features:
     - Reaction based panel buttons
     - Player seeking (seek, ff/rwd, replay)
@@ -71,6 +68,9 @@ The settings will be written to Assets/config.json. We recommend backing up this
     - Update announcement
 - Doodads:
     - Calculator powered by math.js
+    - Fake NKODICE minigame
+    - Ship construction recipe generator for Kancolle (wow this is an old feature)
+    - Stocks function powered by YFinance
 
 ## Some future works
 - More documentations! This is a crude readme at the moment without too many helpful stuff
