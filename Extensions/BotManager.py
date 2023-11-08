@@ -37,6 +37,7 @@ class BotManager(commands.Cog):
     async def on_resumed(self):
         log.info("Suica has been resumed?")
 
+    # Command event listeners
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
@@ -49,6 +50,10 @@ class BotManager(commands.Cog):
         else:
             await ctx.message.add_reaction("❌")
             raise error
+        
+    @commands.Cog.listener()
+    async def on_command_completion(self, ctx):
+        await ctx.message.add_reaction("✅")
 
     # Commands
     @commands.is_owner()
