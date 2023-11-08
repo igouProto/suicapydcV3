@@ -134,7 +134,6 @@ class Jukebox(commands.Cog):
         await player.teardown()
 
         await ctx.message.add_reaction("👋")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="play", aliases=["p"])
     async def _play(self, ctx: commands.Context, *, query: str):
@@ -146,6 +145,8 @@ class Jukebox(commands.Cog):
             await ctx.invoke(self._join)
 
         player: Player = await self.get_player(ctx)
+
+        #TODO: get track by the helper function
 
         # pre-process the query
         processed_query = query.strip("<>")
@@ -165,6 +166,8 @@ class Jukebox(commands.Cog):
         # perform the query
         await ctx.send(Messages.JUKEBOX_SEARCHING.format(processed_query))
         await ctx.typing()  # typing indicator for UX
+
+        # TODO: Decide whether to use YouTubeTrack or GenericTrack based on the query
         tracks = await wavelink.YouTubeTrack.search(processed_query)
         if not tracks:
             await ctx.send(Messages.JUKEBOX_NO_MATCHES.format(processed_query))
@@ -199,7 +202,6 @@ class Jukebox(commands.Cog):
         await player.pause()
 
         await ctx.message.add_reaction("⏸️")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="resume", aliases=["re"])
     async def _resume(self, ctx):
@@ -211,7 +213,6 @@ class Jukebox(commands.Cog):
         await player.resume()
 
         await ctx.message.add_reaction("▶️")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(
         name="skip", aliases=["sk"]
@@ -228,7 +229,6 @@ class Jukebox(commands.Cog):
 
         await player.stop()
         await ctx.message.add_reaction("⏭️")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="back", aliases=["pr", "prev"])
     async def _back(self, ctx: commands.Context):
@@ -248,7 +248,6 @@ class Jukebox(commands.Cog):
             await ctx.send(Messages.JUKEBOX_LOOP_ONE_DISABLED_AUTO)
 
         await ctx.message.add_reaction("⏮️")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="queue", aliases=["q", "qu"])
     async def _queue(self, ctx: commands.Context, page: int | str = 1):
@@ -289,7 +288,6 @@ class Jukebox(commands.Cog):
             await ctx.message.add_reaction("⬆")
         else:
             await ctx.message.add_reaction("⬇")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="shuffle", aliases=["sh", "shuf"])
     async def _shuffle(self, ctx):
@@ -301,7 +299,6 @@ class Jukebox(commands.Cog):
         player.shuffle()
 
         await ctx.message.add_reaction("🔀")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="repeat", aliases=["loop", "lp"])
     async def _repeat(self, ctx):
@@ -316,7 +313,6 @@ class Jukebox(commands.Cog):
             await ctx.message.add_reaction("🔂")
         else:
             await ctx.message.add_reaction("➡")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="repeatall", aliases=["loopall", "lpa"])
     async def _repeatall(self, ctx):
@@ -331,7 +327,6 @@ class Jukebox(commands.Cog):
             await ctx.message.add_reaction("🔁")
         else:
             await ctx.message.add_reaction("➡")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="top", aliases=["tp"])
     async def _top(self, ctx, index: int, skip: str = None):
@@ -351,7 +346,6 @@ class Jukebox(commands.Cog):
             await ctx.invoke(self._skip)
 
         await ctx.message.add_reaction("⏫")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="remove", aliases=["rm"])
     async def _remove(self, ctx, index: int):
@@ -382,7 +376,6 @@ class Jukebox(commands.Cog):
             player.clear_history()
 
         await ctx.message.add_reaction("🗑️")
-        await ctx.message.add_reaction("✅")
 
     @commands.command(name="seek", aliases=["se"])
     async def _seek(self, ctx, time: str):
