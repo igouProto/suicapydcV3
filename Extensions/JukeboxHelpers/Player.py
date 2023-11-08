@@ -5,6 +5,10 @@ from .Errors import *
 
 
 class Player(wavelink.Player):
+    """
+    A custom player class that extends wavelink.Player
+    Includes a custom queue class that extends wavelink.Queue and a bounded channel for sending system messages
+    """
     def __init__(self, *args: Any, **kwargs: Any):
         super().__init__(*args, **kwargs)
 
