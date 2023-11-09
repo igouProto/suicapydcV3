@@ -24,10 +24,8 @@ class Bot(commands.Bot):
         self.token = ""
         self.backstage_channel = None
         self.prefix = "."
-        self.version = "3.0-alpha"
-        self.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(
-            self.version, self.prefix
-        )
+        self.version = "3.0.1a"
+        self.status_message = ""
 
         # Load configuration from config.json
         try:
@@ -62,6 +60,9 @@ class Bot(commands.Bot):
         self.token = config["token"]
         self.prefix = config["prefix"]
         self.backstage_channel = config["backstage_channel"]
+        self.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(
+            self.version, self.prefix
+        )
         super().__init__(command_prefix=self.prefix, intents=intents)
 
     async def load_extensions(self):
