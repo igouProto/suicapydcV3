@@ -39,6 +39,11 @@ class BotManager(commands.Cog):
 
     # Command event listeners
     @commands.Cog.listener()
+    async def on_command(self, ctx):
+        # await ctx.typing()
+        pass
+
+    @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
 
         if isinstance(error, commands.CommandNotFound) or isinstance(
