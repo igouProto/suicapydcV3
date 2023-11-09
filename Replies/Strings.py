@@ -53,6 +53,7 @@ class Messages:
     JUKEBOX_AUTOPLAY_ENABLED = ":information_source: 已啟用自動播放。將在播放清單結束後自動播放推薦歌曲。"
     JUKEBOX_AUTOPLAY_DISABLED = ":information_source: 已停用自動播放。"
     JUKEBOX_AUTO_DISCONNECTED = "⬅️ 人都跑光光了，那我也要睡啦。"
+    JUKEBOX_SEEK = ":mag: 已跳轉至：`{}`"
 
     # About description template (TODO: This should go to EmbedStrings)
     ABOUT = "ID：{}\n 應用程式名稱：{}\n 擁有者：{}\n 誕生時間：{}\n作者：igouProto [(GitHub!)](https://github.com/igouProto/suicapydcV3)"
