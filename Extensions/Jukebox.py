@@ -153,10 +153,10 @@ class Jukebox(commands.Cog):
 
         # extra message when adding a song from YT's playlist view
         if "&list=" in query:
-            processed_query = processed_query.split("&list=")[0]
+            processed_query = processed_query.split("&")[0]
             correct_url = (
-                "<https://www.youtube.com/playlist?list="
-                + query.split("&list=")[1]
+                "<https://www.youtube.com/playlist?"
+                + query.split("&")[1]
                 + ">"
             )
             await ctx.send(
@@ -378,8 +378,32 @@ class Jukebox(commands.Cog):
         await ctx.message.add_reaction("🗑️")
 
     @commands.command(name="seek", aliases=["se"])
-    async def _seek(self, ctx, time: str):
-        pass
+    async def _seek(self, ctx, time: str | int):
+        """
+        Seeks to the specified time in the current song.
+        Accepts a time in the format of "hh:mm:ss" or seconds.
+        """
+        player = await self.get_player(ctx)
+
+        # parse time
+        # if ":" in time: convert to seconds
+        if ":" in time:
+            time = Helpers().parse_time(time)
+
+        # cap time between 0 and the current track's duration
+        time = max(min(int(time), player.current.duration), 0)
+
+        await player.seek(time * 1000)
+        await ctx.send(Messages.JUKEBOX_SEEK.format(Helpers().time_format(time)))
+
+    @commands.command(name="replay", aliases=["rp"])
+    async def _replay(self, ctx):
+        """
+        Replays the current song. 
+        Essentially a shortcut to .seek 0
+        """
+        await ctx.invoke(self._seek, time="0")
+
 
     # TODO: Implement proper autoplay
     @commands.command(name="autoplay", aliases=["ap"], enabled=False)
