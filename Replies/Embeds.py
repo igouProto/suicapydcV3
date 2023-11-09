@@ -205,6 +205,18 @@ class Helpers:
         duration.append(f"{seconds:02d}")
 
         return ":".join(duration)
+    
+    def parse_time(self, time):
+        """
+        Parse the time in xx:xx:xx format to seconds.
+        """
+        time_list = time.split(":")
+        if len(time_list) == 3:
+            return int(time_list[0]) * 3600 + int(time_list[1]) * 60 + int(time_list[2])
+        elif len(time_list) == 2:
+            return int(time_list[0]) * 60 + int(time_list[1])
+        else:
+            return int(time_list[0])
 
     def title_parser(self, raw_title):
         """
