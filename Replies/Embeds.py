@@ -128,6 +128,20 @@ class JukeboxEmbeds:
                 footer += f"  •  {EmbedStrings.JUKEBOX_AUTOPLAY_ENABLED}"
             self.set_footer(text=footer)
 
+    class ErrorEmbed(discord.Embed):
+        """
+        Embed for displaying an error message.
+        """
+
+        def __init__(self, error: str):
+            super().__init__(
+                color=JukeboxEmbeds.color,
+                title=EmbedStrings.JUKEBOX_ERROR_TITLE,
+                description=EmbedStrings.JUKEBOX_ERROR_DESCRIPTION,
+            )
+
+            self.set_footer(text=error)
+
 
 class OmikujiEmbeds:
     """

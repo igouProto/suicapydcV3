@@ -192,6 +192,14 @@ class Jukebox(commands.Cog):
         if player.current.is_stream:
             await ctx.send(Messages.JUKEBOX_STREAM_WARNING.format(self.bot.prefix))
 
+    @_play.error
+    async def _play_error(self, ctx: commands.Context, error):
+        error = error.original
+        
+        embed = JukeboxEmbeds.ErrorEmbed(error=error)
+
+        await ctx.send(embed=embed)
+
     @commands.command(name="pause", aliases=["pa", "stop"])
     async def _pause(self, ctx: commands.Context):
         """
