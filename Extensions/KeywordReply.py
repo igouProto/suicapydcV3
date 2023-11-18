@@ -138,7 +138,7 @@ class KeywordReply(commands.Cog):
             try:
                 with open("Assets/keywords.txt", "w") as source:
                     for key in self.public_dictionary.keys():
-                        source.write("{}:{}".format(key, self.public_dictionary[key]))
+                        source.write("{}:{}\n".format(key, self.public_dictionary[key]))
                 source.close()
             except Exception as e:
                 log.error("Failed to write to keywords.txt: {}".format(e))
@@ -184,7 +184,7 @@ class KeywordReply(commands.Cog):
                     ) as source:
                         for key in self.guild_dictionaries[ctx.guild.id].keys():
                             source.write(
-                                "{}:{}".format(
+                                "{}:{}\n".format(
                                     key, self.guild_dictionaries[ctx.guild.id][key]
                                 )
                             )
@@ -209,7 +209,7 @@ class KeywordReply(commands.Cog):
         try:
             with open("Assets/keywords.txt", "w") as source:
                 for key in self.public_dictionary.keys():
-                    source.write("{}:{}".format(key, self.public_dictionary[key]))
+                    source.write("{}:{}\n".format(key, self.public_dictionary[key]))
             source.close()
         except Exception as e:
             log.error("Failed to write to keywords.txt: {}".format(e))
@@ -220,26 +220,25 @@ class KeywordReply(commands.Cog):
     @commands.command(name="backupkw")
     async def _backup_guild_kw(self, ctx: commands.Context):
         """
-        Exports the guild's dictionary to keywords-{guild.id}.txt and sends it to chat.
+        Send keywords-{guild.id}.txt to the chat.
         """
         if ctx.guild.id in self.guild_dictionaries.keys():
             try:
+                """
                 with open("Assets/keywords-{}.txt".format(ctx.guild.id), "w") as source:
                     for key in self.guild_dictionaries[ctx.guild.id].keys():
                         source.write(
-                            "{}:{}".format(
+                            "\n{}:{}".format(
                                 key, self.guild_dictionaries[ctx.guild.id][key]
                             )
                         )
                 source.close()
-            except Exception as e:
-                log.error(
-                    "Failed to write to keywords-{}.txt: {}".format(ctx.guild.id, e)
+                """
+                await ctx.send(
+                    file=discord.File("Assets/keywords-{}.txt".format(ctx.guild.id))
                 )
-
-            await ctx.send(
-                file=discord.File("Assets/keywords-{}.txt".format(ctx.guild.id))
-            )
+            except Exception as e:
+                log.error("f{e}")
         else:
             await ctx.send(Messages.KEYWORD_GUILD_NOT_FOUND.format(ctx.prefix))
 
@@ -288,7 +287,7 @@ class KeywordReply(commands.Cog):
             if attachment.filename == "keywords.txt":
                 await attachment.save("Assets/keywords-{}.txt".format(ctx.guild.id))
 
-                # load every guild's keyword-reply pairs from the file
+                # load this guild's keyword-reply pairs from the file
                 try:
                     with open(
                         "Assets/keywords-{}.txt".format(ctx.guild.id), "r"
@@ -338,13 +337,13 @@ class Helpers:
             file_name = "Assets/keywords-{}.txt".format(guild_id)
         try:
             with open(file_name, "a") as source:
-                source.write("\n{}:{}".format(keyword, reply))
+                source.write("{}:{}\n".format(keyword, reply))
             source.close()
         except Exception as e:
             # create a new file if it doesn't exist
             if isinstance(e, FileNotFoundError):
                 with open(file_name, "w") as source:
-                    source.write("{}:{}".format(keyword, reply))
+                    source.write("{}:{}\n".format(keyword, reply))
                 source.close()
             else:
                 log.error("Failed to write to keywords-{}.txt: {}".format(guild_id, e))
