@@ -13,6 +13,8 @@ Suica replies if it catches a keyword from chat.
 Supports public and guild-specific dictionaries.
 """
 
+# TODO: Refactor this pile of mess...
+
 
 class KeywordReply(commands.Cog):
     def __init__(self, bot: Suica.Bot):
@@ -207,14 +209,9 @@ class KeywordReply(commands.Cog):
         Exports the public dictionary to keywords.txt and sends it to chat.
         """
         try:
-            with open("Assets/keywords.txt", "w") as source:
-                for key in self.public_dictionary.keys():
-                    source.write("{}:{}\n".format(key, self.public_dictionary[key]))
-            source.close()
+            await ctx.send(file=discord.File("Assets/keywords.txt"))
         except Exception as e:
-            log.error("Failed to write to keywords.txt: {}".format(e))
-
-        await ctx.send(file=discord.File("Assets/keywords.txt"))
+            log.error(e)
 
     # backup the guild's dictionary to keywords-{guild.id}.txt and send to chat
     @commands.command(name="backupkw")
@@ -224,21 +221,11 @@ class KeywordReply(commands.Cog):
         """
         if ctx.guild.id in self.guild_dictionaries.keys():
             try:
-                """
-                with open("Assets/keywords-{}.txt".format(ctx.guild.id), "w") as source:
-                    for key in self.guild_dictionaries[ctx.guild.id].keys():
-                        source.write(
-                            "\n{}:{}".format(
-                                key, self.guild_dictionaries[ctx.guild.id][key]
-                            )
-                        )
-                source.close()
-                """
                 await ctx.send(
                     file=discord.File("Assets/keywords-{}.txt".format(ctx.guild.id))
                 )
             except Exception as e:
-                log.error("f{e}")
+                log.error(e)
         else:
             await ctx.send(Messages.KEYWORD_GUILD_NOT_FOUND.format(ctx.prefix))
 
@@ -282,6 +269,7 @@ class KeywordReply(commands.Cog):
         Accepts a keywords-{guild.id}.txt file and overwrites the guild's dictionary.
         Also made owner-only for security reasons.
         """
+        guild_id = ctx.guild.id
         if len(ctx.message.attachments) > 0:
             attachment = ctx.message.attachments[0]
             if attachment.filename == "keywords.txt":
@@ -290,12 +278,20 @@ class KeywordReply(commands.Cog):
                 # load this guild's keyword-reply pairs from the file
                 try:
                     with open(
-                        "Assets/keywords-{}.txt".format(ctx.guild.id), "r"
+                        "Assets/keywords-{}.txt".format(ctx.guild.id), "r+"
                     ) as source:
                         self.guild_dictionaries[ctx.guild.id] = {}
                         for line in source:
                             (keyword, reply) = line.split(":", 1)
                             self.guild_dictionaries[ctx.guild.id][keyword] = reply
+
+                        # before closing, see if there's a new line at the end of the file
+                        # if not, add one so new entries don't get appended to the last line
+                        source.seek(0)
+                        last_char = source.read()[-1]
+                        if last_char != "\n":
+                            source.write("\n")
+
                     source.close()
                     log.info(
                         "Loaded keyword pairs for guild {} ({})".format(
