@@ -126,7 +126,7 @@ class JukeboxEmbeds:
             footer = EmbedStrings.JUKEBOX_PAGINATION.format(page_num, max_page)
             # if player.autoplay:
             #     footer += f"  •  {EmbedStrings.JUKEBOX_AUTOPLAY_ENABLED}"
-            # self.set_footer(text=footer)
+            self.set_footer(text=footer)
 
     class ErrorEmbed(discord.Embed):
         """
