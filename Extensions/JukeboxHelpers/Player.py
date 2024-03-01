@@ -18,7 +18,7 @@ class Player(wavelink.Player):
     async def teardown(self):
         try:
             await super().disconnect()
-            self.clear_state()
+            # self.clear_state()
         except KeyError:
             pass
 
@@ -27,7 +27,7 @@ class Player(wavelink.Player):
         new_track = await self.queue.add(tracks)
 
         # play the song if the queue is empty or if the player is not playing
-        if self.queue.is_empty or not self.is_playing():
+        if self.queue.is_empty or not self.playing:
             await self.play(self.queue.next)
 
         return new_track
@@ -38,14 +38,11 @@ class Player(wavelink.Player):
             await self.play(self.queue.next)
         except QueueIsEmpty:
             raise QueueIsEmpty
-        '''
-        print("Advanced to the next song")
-        print("Next", self.queue)
-        print("Prev", self.queue.history)
-        '''
+        except Exception as e:
+            raise e
 
         # counting repeated times cuz i'm bored
-        if self.queue.loop:
+        if self.queue.mode == wavelink.QueueMode.loop:
             self.queue.increment_loop_count()
         else:
             self.queue.reset_loop_count()
@@ -55,22 +52,14 @@ class Player(wavelink.Player):
         try:
             self.queue.back()
         except QueueIsEmpty:
-            print("History is empty")
-        
-        '''
-        print("Backed to the previous song")
-        print("Next", self.queue)
-        print("Prev", self.queue.history)
-        '''
+            raise QueueIsEmpty
 
-        # await self.advance()
-
-    async def toggle_loop_one(self, ctx):
+    async def toggle_loop_one(self):
         self.queue.toggle_loop_one()
 
         return self.queue.is_looping_one
 
-    async def toggle_loop_all(self, ctx):
+    async def toggle_loop_all(self):
         self.queue.toggle_loop_all()
 
         return self.queue.is_looping_all
@@ -88,17 +77,16 @@ class Player(wavelink.Player):
         return self.queue.get_paginated_queue(page)
     
     def move_song_to_top(self, index: int):
-        self.queue.move_song_to_top(index)
+        self.queue.top(index)
 
     def remove_song(self, index: int):
-        self.queue.move_song_to_top(index)
-        return self.queue.get()
+        return self.queue.rm(index)
+
+    # def clear_state(self):
+    #     self.queue.reset_state()
     
-    def clear_state(self):
-        self.queue.reset_state()
-    
-    def toggle_auto_play(self):
-        self.autoplay = not self.autoplay
+    # def toggle_auto_play(self):
+    #     self.autoplay = not self.autoplay
 
     @property
     def is_looping_one(self):
@@ -107,7 +95,7 @@ class Player(wavelink.Player):
     @property
     def is_looping_all(self):
         return self.queue.is_looping_all
-
+    
     @property
     def loop_count(self):
         return self.queue.repeated_times
