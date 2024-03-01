@@ -1,4 +1,3 @@
-from enum import auto
 import logging
 import discord
 from discord.ext import commands
@@ -175,14 +174,19 @@ class Jukebox(commands.Cog):
         # add the song(s) to queue
         new_track = await player.add(ctx, tracks)
 
-        # extra message when importing a playlist
+        # extra message and embed indicator when importing a playlist
+        from_playlist = False
+        new_track_count = 0
         if "/playlist?" in query:
+            new_track_count = len(tracks.tracks)
             await ctx.send(
-                Messages.JUKEBOX_IMPORTED_PLAYLIST.format(len(tracks.tracks))
+                Messages.JUKEBOX_IMPORTED_PLAYLIST.format(new_track_count)
             )
+            from_playlist = True
+            
 
         # display the song info
-        embed = JukeboxEmbeds.NewSongEmbed(ctx=ctx, track=new_track)
+        embed = JukeboxEmbeds.NewSongEmbed(ctx=ctx, track=new_track, from_playlist=from_playlist, new_track_count=new_track_count)
         await ctx.send(embed=embed)
 
         # extra message when the song playing is a stream

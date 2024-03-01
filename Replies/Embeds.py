@@ -78,7 +78,7 @@ class JukeboxEmbeds:
         Embed for displaying a new song added to the queue.
         """
 
-        def __init__(self, ctx: commands.context, track: wavelink.Playable):
+        def __init__(self, ctx: commands.context, track: wavelink.Playable, from_playlist: bool = False, new_track_count: int = 1):
             super().__init__(
                 color=JukeboxEmbeds.color,
             )
@@ -98,6 +98,12 @@ class JukeboxEmbeds:
                 icon_url=ctx.author.display_avatar.url,
             )
             self.set_thumbnail(url=track.artwork)
+
+            # extra footer if importing from a playlist
+            if from_playlist:
+                self.set_footer(
+                    text=EmbedStrings.JUKEBOX_NEW_SONGS_COUNT.format(new_track_count - 1)
+                )
 
     class QueueEmbed(NowPlayEmbed):
         """
@@ -305,6 +311,6 @@ class Helpers:
         processed_page = ""
         index = 1
         for item in raw_page:
-            processed_page += f"`{index:02d}.` {item.title} `({Helpers().time_format(item.length / 1000)})`\n"
+            processed_page += f"`{index:02d}.` {self.title_parser(item.title)} `({Helpers().time_format(item.length / 1000)})`\n"
             index += 1
         return processed_page

@@ -84,6 +84,7 @@ class EmbedStrings:
     JUKEBOX_AUTOPLAY_ENABLED = "已啟用自動播放。將在播放清單結束後自動播放推薦歌曲。"
     JUKEBOX_ERROR_TITLE = ":x: 糟了個糕"
     JUKEBOX_ERROR_DESCRIPTION = "載入曲目時發生錯誤。"
+    JUKEBOX_NEW_SONGS_COUNT = "以及其他{}首歌曲。"
 
     # Omikuji
     OMIKUJI_TITLE = "{} 的每日占卜結果～"
