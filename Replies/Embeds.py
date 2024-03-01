@@ -68,7 +68,7 @@ class JukeboxEmbeds:
             )
             self.set_thumbnail(url=thumbnail)
 
-            if player and player.is_looping_one:
+            if player and player.queue.mode == wavelink.QueueMode.loop:
                 self.set_footer(
                     text=EmbedStrings.JUKEBOX_LOOP_COUNT.format(player.loop_count)
                 )
@@ -78,7 +78,7 @@ class JukeboxEmbeds:
         Embed for displaying a new song added to the queue.
         """
 
-        def __init__(self, ctx: commands.context, track: wavelink.YouTubeTrack):
+        def __init__(self, ctx: commands.context, track: wavelink.Playable):
             super().__init__(
                 color=JukeboxEmbeds.color,
             )
@@ -90,14 +90,14 @@ class JukeboxEmbeds:
                 self.description = f"` 🔴 LIVE `  •  {track.author}"
             else:
                 self.description = (
-                    f"{Helpers().time_format(track.duration / 1000)}  •  {track.author}"
+                    f"{Helpers().time_format(track.length / 1000)}  •  {track.author}"
                 )
 
             self.set_author(
                 name=f"{EmbedStrings.JUKEBOX_NEW_SONG_ADDED.format(ctx.author.display_name)}",
                 icon_url=ctx.author.display_avatar.url,
             )
-            self.set_thumbnail(url=track.thumbnail)
+            self.set_thumbnail(url=track.artwork)
 
     class QueueEmbed(NowPlayEmbed):
         """
@@ -124,9 +124,9 @@ class JukeboxEmbeds:
             )
 
             footer = EmbedStrings.JUKEBOX_PAGINATION.format(page_num, max_page)
-            if player.autoplay:
-                footer += f"  •  {EmbedStrings.JUKEBOX_AUTOPLAY_ENABLED}"
-            self.set_footer(text=footer)
+            # if player.autoplay:
+            #     footer += f"  •  {EmbedStrings.JUKEBOX_AUTOPLAY_ENABLED}"
+            # self.set_footer(text=footer)
 
     class ErrorEmbed(discord.Embed):
         """
@@ -232,7 +232,7 @@ class Helpers:
         else:
             return int(time_list[0])
 
-    def title_parser(self, raw_title):
+    def title_parser(self, raw_title: str):
         """
         Escapes all the asterisks in the title to avoid Discord making the title italic.
         """
@@ -249,7 +249,7 @@ class Helpers:
         Returns a tuple of uri, title, progress_display, volume_display, thumbnail.
         """
         if player:
-            track: wavelink.Playable | wavelink.YouTubeTrack = player.current
+            track: wavelink.Playable | wavelink.Playable = player.current
         else:
             track = None
 
@@ -265,16 +265,16 @@ class Helpers:
 
         title = self.title_parser(track.title)
         uri = track.uri
-        duration = self.time_format(track.duration / 1000)
+        duration = self.time_format(track.length / 1000)
         position = self.time_format(player.position / 1000)
         volume = player.volume
 
         # the status display
         pause_icon = ""
         loop_icon = ""
-        if player.is_paused():
+        if player.paused:
             pause_icon = "⏸️"
-        elif player.is_playing():
+        elif player.playing:
             pause_icon = "▶️"
 
         if player.queue.is_looping_one:
@@ -294,7 +294,7 @@ class Helpers:
         volume_display = f"🔊 {volume}%"
 
         # thumbnail
-        thumbnail = track.thumbnail
+        thumbnail = track.artwork
 
         return uri, title, progress_display, volume_display, thumbnail
 
@@ -305,6 +305,6 @@ class Helpers:
         processed_page = ""
         index = 1
         for item in raw_page:
-            processed_page += f"`{index:02d}.` {item.title} `({Helpers().time_format(item.duration / 1000)})`\n"
+            processed_page += f"`{index:02d}.` {item.title} `({Helpers().time_format(item.length / 1000)})`\n"
             index += 1
         return processed_page
