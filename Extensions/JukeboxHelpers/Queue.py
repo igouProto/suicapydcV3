@@ -1,11 +1,9 @@
 import wavelink
 from .Errors import *
 
-"""
-
-"""
 
 class Queue(wavelink.Queue):
+
     def __init__(self):
         super().__init__()
 
@@ -13,36 +11,12 @@ class Queue(wavelink.Queue):
         self.songs_per_page = 10
         self.current_page = 1
 
-    # properties
-    @property
-    def next(self):
-        if self.is_empty and not (self.loop_all or self.loop):
-            raise QueueIsEmpty
-
-        next_track = self.get()
-        return next_track
-
-    @property
-    def loop_count(self):
-        return self.repeated_times
-
-    @property
-    def is_looping_one(self):
-        return self.loop
-
-    @property
-    def is_looping_all(self):
-        return self.loop_all
-
-    # methods
-    def increment_loop_count(self):
-        self.repeated_times += 1
-
-    def reset_loop_count(self):
-        self.repeated_times = 0
-
+    # playback and navigating
     async def add(self, tracks):
-        if isinstance(tracks, wavelink.YouTubePlaylist):
+        """
+        Adds tracks to the queue
+        """
+        if isinstance(tracks, wavelink.Playlist):
             self.put(tracks)
             new_track = tracks.tracks[0]
         else:
@@ -51,39 +25,68 @@ class Queue(wavelink.Queue):
 
         return new_track
 
+    # get the next song
+    @property
+    def next(self):
+        """
+        Gets the next song from the queue
+        """
+        if self.is_empty and (self.mode == wavelink.QueueMode.normal):
+            raise QueueIsEmpty
+
+        next_track = self.get()
+        return next_track
+
+    # going to the previous song
     def back(self):
         """
         Backs to the previous song.
-        Dequeues twice from the history queue and enqueues them to the main queue.
+        Dequeue twice from the history queue and enqueues them to the main queue.
         """
         try:
             for _ in range(2 if self.history.count > 1 else 1):
-                self.put_at_front(self.history.pop())
-        except IndexError or QueueIsEmpty:
-            pass
-        '''
-        print("Queue.back(): Backed to the previous song")
-        print("Next", self)
-        print("Prev", self.history)
-        '''
-        # return
-       
+                self.put_at(0, self.history.get_at(-1))
+        except QueueIsEmpty:
+            raise QueueIsEmpty
+
+    """
+    Loop Controls
+    """
+
+    @property
+    def is_looping_one(self):
+        return self.mode == wavelink.QueueMode.loop
+
+    @property
+    def is_looping_all(self):
+        return self.mode == wavelink.QueueMode.loop_all
+
+    @property
+    def loop_count(self):
+        return self.repeated_times
+
+    def increment_loop_count(self):
+        self.repeated_times += 1
+
+    def reset_loop_count(self):
+        self.repeated_times = 0
 
     def toggle_loop_one(self):
-        if self.loop:
-            self.loop = False
+        if self.mode == wavelink.QueueMode.loop:
+            self.mode = wavelink.QueueMode.normal
         else:
-            self.loop = True
-            self.loop_all = False
+            self.mode = wavelink.QueueMode.loop
 
     def toggle_loop_all(self):
-        if self.loop_all:
-            self.loop_all = False
+        if self.mode == wavelink.QueueMode.loop_all:
+            self.mode = wavelink.QueueMode.normal
         else:
-            self.loop_all = True
-            self.loop = False
+            self.mode = wavelink.QueueMode.loop_all
 
-    # TODO: Consider showing the history queue as well. Combine both and paginate as one?
+    """
+    Queue querying
+    """
+
     def get_paginated_queue(self, page: int | str):
         """
         Returns a paginated list of songs in the queue.
@@ -108,37 +111,46 @@ class Queue(wavelink.Queue):
 
         # send paginated queue
         return (
-            list(self._queue)[
+            list(self._items)[
                 (page - 1) * self.songs_per_page : page * self.songs_per_page
             ],
             page,
             max(max_page, 1),
         )
 
-    def move_song_to_top(self, index: int):
+    """
+    Queue manipulation
+    """
+
+    def rm(self, index) -> wavelink.Playable:
         """
-        Moves a song to the top of the queue.
+        Removes a song from the current page the user's seeing
         """
-        # raise error if index is out of range
+        # raise error if index out of range
         if index < 1 or index > self.songs_per_page:
             raise IndexError
-        
-        # compute index with the current page and songs per page
-        index = (self.current_page - 1) * self.songs_per_page + (index - 1) # the raw index and current page are 1-based
 
-        # get the song at the specified index
-        song = self[index]
+        # compute the true index with the # of the current page the user's seeing
+        real_idx = (self.current_page - 1) * self.songs_per_page + (index - 1)
 
-        # remove the song from the queue
-        del self[index]
+        # peek at the item to be removed cuz we want to return the info of it
+        item_deleted = self.peek(real_idx)
 
-        # put the song at the top of the queue
-        self.put_at_front(song)
+        # then remove it
+        self.delete(real_idx)
 
-    def reset_state(self):
+        return item_deleted
+
+    # moving a song to the top of the queue
+    def top(self, index) -> wavelink.Playable:
         """
-        Resets the queue state.
+        Raises a song from the page the user's seeing to the top of the queue
         """
-        self.current_page = 1
-        self.repeated_times = 0
-        self.reset()
+        # raise error if index out of range
+        if index < 1 or index > self.songs_per_page:
+            raise IndexError
+
+        # remove it, then put it back to the top of the queue
+        item = self.rm(index)
+
+        self.put_at(0, item)
