@@ -25,23 +25,25 @@ class Jukebox(commands.Cog):
         self.bot = bot
         self.node = None
 
-    # Create and connect to a lavalink node
+    # Create a lavalink node when the bot is ready
     @commands.Cog.listener()
     async def on_ready(self):
         await self.start_nodes()
-        node = wavelink.NodePool.get_node()
-        self.node = node
 
     async def start_nodes(self):
         node: wavelink.Node = wavelink.Node(
             uri="http://127.0.0.1:2333", password="igproto"
         )
-        await wavelink.NodePool.connect(client=self.bot, nodes=[node])
+        await wavelink.Pool.connect(client=self.bot, nodes=[node])
 
-    # Event listeners
+    # Connect to the lavalink node once it's ready
     @commands.Cog.listener()
-    async def on_wavelink_node_ready(self, node: wavelink.Node):
-        log.info(f"Connected to lavalink node {node.id}")
+    async def on_wavelink_node_ready(self, payload: wavelink.NodeReadyEventPayload):
+        try:
+            self.node = payload.node
+            log.info(f"Connected to lavalink node {payload.node.identifier}")
+        except:
+            log.error("Failed connecting to lavalink node.")
 
     # Automatically disconnect from voice channel when everyone leaves
     @commands.Cog.listener("on_voice_state_update")
@@ -80,15 +82,13 @@ class Jukebox(commands.Cog):
 
     # Get the next song in queue when the current song ends
     @commands.Cog.listener()
-    async def on_wavelink_track_end(self, payload: wavelink.TrackEventPayload):
+    async def on_wavelink_track_end(self, payload: wavelink.TrackEndEventPayload):
         """
         This event is triggered when the current song ends. It automatically plays the next song in queue.
         """
         try:
-            if not payload.player.autoplay:
+            if payload.player:
                 await payload.player.advance()
-            else:
-                pass  # to be implemented
         except QueueIsEmpty:
             pass
             # await payload.player.bounded_channel.send(Messages.JUKEBOX_NO_MORE_SONGS.format(self.bot.prefix))
@@ -146,12 +146,10 @@ class Jukebox(commands.Cog):
 
         player: Player = await self.get_player(ctx)
 
-        #TODO: get track by the helper function
-
         # pre-process the query
         processed_query = query.strip("<>")
 
-        # extra message when adding a song from YT's playlist view
+        # extra message when adding a song from YT's playlist view.
         if "&list=" in query:
             processed_query = processed_query.split("&")[0]
             correct_url = (
@@ -167,8 +165,7 @@ class Jukebox(commands.Cog):
         await ctx.send(Messages.JUKEBOX_SEARCHING.format(processed_query))
         await ctx.typing()  # typing indicator for UX
 
-        # TODO: Decide whether to use YouTubeTrack or GenericTrack based on the query
-        tracks = await wavelink.YouTubeTrack.search(processed_query)
+        tracks = await wavelink.Playable.search(processed_query, source=wavelink.TrackSource.YouTube)
         if not tracks:
             await ctx.send(Messages.JUKEBOX_NO_MATCHES.format(processed_query))
             if "/playlist?" in query:
@@ -192,6 +189,14 @@ class Jukebox(commands.Cog):
         if player.current.is_stream:
             await ctx.send(Messages.JUKEBOX_STREAM_WARNING.format(self.bot.prefix))
 
+    @_play.error
+    async def _play_error(self, ctx: commands.Context, error):
+        error = error.original
+        
+        embed = JukeboxEmbeds.ErrorEmbed(error=error)
+
+        await ctx.send(embed=embed)
+
     @commands.command(name="pause", aliases=["pa", "stop"])
     async def _pause(self, ctx: commands.Context):
         """
@@ -199,7 +204,7 @@ class Jukebox(commands.Cog):
         """
         player: Player = await self.get_player(ctx)
 
-        await player.pause()
+        await player.pause(True)
 
         await ctx.message.add_reaction("⏸️")
 
@@ -210,7 +215,7 @@ class Jukebox(commands.Cog):
         """
         player: Player = await self.get_player(ctx)
 
-        await player.resume()
+        await player.pause(False)
 
         await ctx.message.add_reaction("▶️")
 
@@ -222,12 +227,12 @@ class Jukebox(commands.Cog):
         Skips the current playing song
         """
         player: Player = await self.get_player(ctx)
-
+        
         if player.is_looping_one:
-            await player.toggle_loop_one(ctx)
+            await player.toggle_loop_one()
             await ctx.send(Messages.JUKEBOX_LOOP_ONE_DISABLED_AUTO)
 
-        await player.stop()
+        await player.skip()
         await ctx.message.add_reaction("⏭️")
 
     @commands.command(name="back", aliases=["pr", "prev"])
@@ -238,7 +243,7 @@ class Jukebox(commands.Cog):
         player: Player = await self.get_player(ctx)
 
         player.go_back()
-        if player.is_playing():
+        if player.playing:
             await player.stop()  # have to do it here for the event listener to pick up
         else:
             await player.advance()
@@ -307,7 +312,7 @@ class Jukebox(commands.Cog):
         """
         player: Player = await self.get_player(ctx)
 
-        await player.toggle_loop_one(ctx)
+        await player.toggle_loop_one()
 
         if player.is_looping_one:
             await ctx.message.add_reaction("🔂")
@@ -321,7 +326,7 @@ class Jukebox(commands.Cog):
         """
         player: Player = await self.get_player(ctx)
 
-        await player.toggle_loop_all(ctx)
+        await player.toggle_loop_all()
 
         if player.is_looping_all:
             await ctx.message.add_reaction("🔁")
@@ -357,8 +362,8 @@ class Jukebox(commands.Cog):
 
         try:
             song_removed: wavelink.Playable = player.remove_song(index)
-        except:
-            pass
+        except Exception as e:
+            raise e
 
         await ctx.send(Messages.JUKEBOX_SONG_REMOVED.format(song_removed.title))
 
@@ -391,7 +396,7 @@ class Jukebox(commands.Cog):
             time = Helpers().parse_time(time)
 
         # cap time between 0 and the current track's duration
-        time = max(min(int(time), player.current.duration), 0)
+        time = max(min(int(time), player.current.length), 0)
 
         await player.seek(time * 1000)
         await ctx.send(Messages.JUKEBOX_SEEK.format(Helpers().time_format(time)))
@@ -406,16 +411,16 @@ class Jukebox(commands.Cog):
 
 
     # TODO: Implement proper autoplay
-    @commands.command(name="autoplay", aliases=["ap"], enabled=False)
-    async def _autoplay(self, ctx):
-        player: Player = await self.get_player(ctx)
+    # @commands.command(name="autoplay", aliases=["ap"], enabled=False)
+    # async def _autoplay(self, ctx):
+    #     player: Player = await self.get_player(ctx)
 
-        player.toggle_auto_play()
+    #     player.toggle_auto_play()
 
-        if player.autoplay:
-            await ctx.send(Messages.JUKEBOX_AUTOPLAY_ENABLED)
-        else:
-            await ctx.send(Messages.JUKEBOX_AUTOPLAY_DISABLED)
+    #     if player.autoplay:
+    #         await ctx.send(Messages.JUKEBOX_AUTOPLAY_ENABLED)
+    #     else:
+    #         await ctx.send(Messages.JUKEBOX_AUTOPLAY_DISABLED)
 
 
 async def setup(bot):
