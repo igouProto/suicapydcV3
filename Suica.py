@@ -24,7 +24,7 @@ class Bot(commands.Bot):
         self.token = ""
         self.backstage_channel = None
         self.prefix = "."
-        self.version = "3.1.0"
+        self.version = "3.1.1"
         self.status_message = ""
 
         # Load configuration from config.json
