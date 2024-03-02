@@ -38,13 +38,25 @@ class Queue(wavelink.Queue):
         return next_track
 
     # going to the previous song
-    def back(self):
+    def back(self, queue_was_empty: bool = False):
         """
         Backs to the previous song.
         Dequeue twice from the history queue and enqueues them to the main queue.
         """
         try:
-            for _ in range(2 if self.history.count > 1 else 1):
+            '''
+            Workaround: Decide to jump backward 2 times or 1 time
+            based on whether the user is jumping back when the whole list was exhausted
+            or there was more coming
+            Since the current playing song gets put to the history queue once played,
+            we have to jump back 2 times to get the previous song
+            However, when the list gets exhausted, nothing gets added to history
+            So we should only jump back once to get the previous song
+            '''
+            if not queue_was_empty:
+                for _ in range(2 if self.history.count > 1 else 1):
+                    self.put_at(0, self.history.get_at(-1))
+            else:
                 self.put_at(0, self.history.get_at(-1))
         except QueueIsEmpty:
             raise QueueIsEmpty
