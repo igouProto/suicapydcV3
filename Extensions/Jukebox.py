@@ -148,13 +148,11 @@ class Jukebox(commands.Cog):
         # pre-process the query
         processed_query = query.strip("<>")
 
-        # extra message when adding a song from YT's playlist view.
+        # process and give an extra message when adding a song from YT's playlist view.
         if "&list=" in query:
             processed_query = processed_query.split("&")[0]
             correct_url = (
-                "<https://www.youtube.com/playlist?"
-                + query.split("&")[1]
-                + ">"
+                "<https://www.youtube.com/playlist?" + query.split("&")[1] + ">"
             )
             await ctx.send(
                 Messages.JUKEBOX_PLAYLIST_INFO.format(self.bot.prefix, correct_url)
@@ -164,29 +162,35 @@ class Jukebox(commands.Cog):
         await ctx.send(Messages.JUKEBOX_SEARCHING.format(processed_query))
         await ctx.typing()  # typing indicator for UX
 
-        tracks = await wavelink.Playable.search(processed_query, source=wavelink.TrackSource.YouTube)
+        tracks = await wavelink.Playable.search(
+            processed_query, source=wavelink.TrackSource.YouTube
+        )
+
+        # return if no songs were found. if the user's importing a playlist, tell them to check PL visibility
         if not tracks:
             await ctx.send(Messages.JUKEBOX_NO_MATCHES.format(processed_query))
             if "/playlist?" in query:
                 await ctx.send(Messages.JUKEBOX_PLAYLIST_PRIVATE)
             return
 
-        # add the song(s) to queue
+        # add found tracks to queue
         new_track = await player.add(ctx, tracks)
 
-        # extra message and embed indicator when importing a playlist
+        # extra message and attach an embed footer when imported from a playlist
         from_playlist = False
         new_track_count = 0
         if "/playlist?" in query:
             new_track_count = len(tracks.tracks)
-            await ctx.send(
-                Messages.JUKEBOX_IMPORTED_PLAYLIST.format(new_track_count)
-            )
+            await ctx.send(Messages.JUKEBOX_IMPORTED_PLAYLIST.format(new_track_count))
             from_playlist = True
-            
 
         # display the song info
-        embed = JukeboxEmbeds.NewSongEmbed(ctx=ctx, track=new_track, from_playlist=from_playlist, new_track_count=new_track_count)
+        embed = JukeboxEmbeds.NewSongEmbed(
+            ctx=ctx,
+            track=new_track,
+            from_playlist=from_playlist,
+            new_track_count=new_track_count,
+        )
         await ctx.send(embed=embed)
 
         # extra message when the song playing is a stream
@@ -196,7 +200,7 @@ class Jukebox(commands.Cog):
     @_play.error
     async def _play_error(self, ctx: commands.Context, error):
         error = error.original
-        
+
         embed = JukeboxEmbeds.ErrorEmbed(error=error)
 
         await ctx.send(embed=embed)
@@ -231,7 +235,7 @@ class Jukebox(commands.Cog):
         Skips the current playing song
         """
         player: Player = await self.get_player(ctx)
-        
+
         if player.is_looping_one:
             await player.toggle_loop_one()
             await ctx.send(Messages.JUKEBOX_LOOP_ONE_DISABLED_AUTO)
@@ -408,11 +412,10 @@ class Jukebox(commands.Cog):
     @commands.command(name="replay", aliases=["rp"])
     async def _replay(self, ctx):
         """
-        Replays the current song. 
+        Replays the current song.
         Essentially a shortcut to .seek 0
         """
         await ctx.invoke(self._seek, time="0")
-
 
     # TODO: Implement proper autoplay
     # @commands.command(name="autoplay", aliases=["ap"], enabled=False)
