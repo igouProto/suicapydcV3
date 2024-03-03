@@ -52,17 +52,13 @@ class JukeboxEmbeds:
                 color=JukeboxEmbeds.color,
             )
 
-            (
-                uri,
-                title,
-                progress_display,
-                volume_display,
-                thumbnail,
-            ) = Helpers().playback_status(player)
+            (uri, title, progress_display, volume_display, thumbnail, author) = (
+                Helpers().playback_status(player)
+            )
 
             self.title = f"{title}"
             self.url = uri
-            self.description = f"{progress_display}  •  {volume_display}"
+            self.description = f"{author} \u200B \n \u200B \n {progress_display} \u200B • \u200B {volume_display}"
             self.set_author(
                 name=EmbedStrings.JUKEBOX_NOWPLAY_TITLE, icon_url=guild.icon
             )
@@ -78,7 +74,13 @@ class JukeboxEmbeds:
         Embed for displaying a new song added to the queue.
         """
 
-        def __init__(self, ctx: commands.context, track: wavelink.Playable, from_playlist: bool = False, new_track_count: int = 1):
+        def __init__(
+            self,
+            ctx: commands.context,
+            track: wavelink.Playable,
+            from_playlist: bool = False,
+            new_track_count: int = 1,
+        ):
             super().__init__(
                 color=JukeboxEmbeds.color,
             )
@@ -87,11 +89,9 @@ class JukeboxEmbeds:
             self.url = track.uri
 
             if track.is_stream:
-                self.description = f"` 🔴 LIVE `  •  {track.author}"
+                self.description = f"` 🔴 LIVE ` \u200B • \u200B {track.author}"
             else:
-                self.description = (
-                    f"{Helpers().time_format(track.length / 1000)}  •  {track.author}"
-                )
+                self.description = f"{Helpers().time_format(track.length / 1000)} \u200B • \u200B {track.author}"
 
             self.set_author(
                 name=f"{EmbedStrings.JUKEBOX_NEW_SONG_ADDED.format(ctx.author.display_name)}",
@@ -102,7 +102,9 @@ class JukeboxEmbeds:
             # extra footer if importing from a playlist
             if from_playlist:
                 self.set_footer(
-                    text=EmbedStrings.JUKEBOX_NEW_SONGS_COUNT.format(new_track_count - 1)
+                    text=EmbedStrings.JUKEBOX_NEW_SONGS_COUNT.format(
+                        new_track_count - 1
+                    )
                 )
 
     class QueueEmbed(NowPlayEmbed):
@@ -225,7 +227,7 @@ class Helpers:
         duration.append(f"{seconds:02d}")
 
         return ":".join(duration)
-    
+
     def parse_time(self, time):
         """
         Parse the time in xx:xx:xx format to seconds.
@@ -255,7 +257,7 @@ class Helpers:
         Returns a tuple of uri, title, progress_display, volume_display, thumbnail.
         """
         if player:
-            track: wavelink.Playable | wavelink.Playable = player.current
+            track: wavelink.Playable = player.current
         else:
             track = None
 
@@ -264,16 +266,18 @@ class Helpers:
             return (
                 self.fallback_url,
                 f"{EmbedStrings.JUKEBOX_NOTHING_PLAYING}",
-                "-- / --",
-                "--",
+                "--:-- / --:--",
+                "🔊 --%",
                 self.fallback_url,
             )
 
+        # basic track info
         title = self.title_parser(track.title)
         uri = track.uri
         duration = self.time_format(track.length / 1000)
         position = self.time_format(player.position / 1000)
         volume = player.volume
+        author = track.author
 
         # the status display
         pause_icon = ""
@@ -294,7 +298,7 @@ class Helpers:
         if track.is_stream:
             progress_display = f"` 🔴 LIVE `"
         else:
-            progress_display = f"{status_display} {position} / {duration}"
+            progress_display = f"{status_display} \u200B {position} / {duration}"
 
         # volume in xx% format
         volume_display = f"🔊 {volume}%"
@@ -302,7 +306,7 @@ class Helpers:
         # thumbnail
         thumbnail = track.artwork
 
-        return uri, title, progress_display, volume_display, thumbnail
+        return uri, title, progress_display, volume_display, thumbnail, author
 
     def process_raw_page(self, raw_page):
         """
