@@ -126,7 +126,7 @@ class JukeboxEmbeds:
                 processed_page = EmbedStrings.JUKEBOX_NOTHING_IN_QUEUE
 
             self.add_field(
-                name=f"{EmbedStrings.JUKEBOX_QUEUE_UPNEXT}",
+                name=f"\u200B \n{EmbedStrings.JUKEBOX_QUEUE_UPNEXT}",
                 value=processed_page,
                 inline=False,
             )
