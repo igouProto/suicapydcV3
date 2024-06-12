@@ -24,8 +24,10 @@ class Bot(commands.Bot):
         self.token = ""
         self.backstage_channel = None
         self.prefix = "."
-        self.version = "3.1.1"
+        self.version = "3.2a"
         self.status_message = ""
+
+        self.gemini_key = None # google gemini api key
 
         # Load configuration from config.json
         try:
@@ -34,12 +36,13 @@ class Bot(commands.Bot):
                 log.info("Config loaded from Assets/config.json")
         except (FileNotFoundError, json.JSONDecodeError) as e:
             # if config.json is not found, treat it as a fresh setup
-            log.error(
-                "Failed to load config.json: {}, starting initial setup".format(e)
-            )
+            # TODO: Add Gemini API key setup
+            log.error("Failed to load config.json: {}, starting initial setup".format(e))
+
             token = input("Enter bot token: ")
             prefix = input("Enter command prefix: ")
             backstage_channel = input("Enter backstage channel ID: ")
+
             # save configuration
             config = {
                 "token": token,
@@ -48,9 +51,7 @@ class Bot(commands.Bot):
             }
             with open("Assets/config.json", "w") as target:
                 json.dump(config, target)
-                log.info(
-                    "Config saved to Assets/config.json and will be loaded on next startup"
-                )
+                log.info("Config saved to Assets/config.json and will be loaded on next startup")
 
         # Setup intents as they are required in 2.0
         intents = discord.Intents.default()
@@ -63,6 +64,9 @@ class Bot(commands.Bot):
         self.status_message = Messages.DEFAULT_STATUS_MESSAGE.format(
             self.version, self.prefix
         )
+
+        self.gemini_key = config["gemini_key"] if "gemini_key" in config else None
+
         super().__init__(command_prefix=self.prefix, intents=intents)
 
     async def load_extensions(self):
