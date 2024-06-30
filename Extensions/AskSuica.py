@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 """
 So I'm trying out Google Gemini to see if I can add some AI to the bot.
 """
-# TODO: Chat session based on guild or user ID? We need 
+# TODO: Chat session based on guild or user ID?
 
 class AskSuica(commands.Cog):
     def __init__(self, bot):
@@ -37,7 +37,7 @@ class AskSuica(commands.Cog):
             HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT: HarmBlockThreshold.BLOCK_NONE,
         }
         self.model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
+            model_name="gemini-1.5-flash-latest",
             generation_config = self.generation_config,
             safety_settings = self.safety_settings,
             # See https://ai.google.dev/gemini-api/docs/safety-settings
@@ -48,7 +48,7 @@ class AskSuica(commands.Cog):
     @commands.command(name="ask", aliases = ['a'])
     async def _ask(self, ctx, *, query):
         async with ctx.typing():
-            resp = self.chat_session.send_message(query) # this blocks all other command requests, try async version?
+            resp = await self.chat_session.send_message_async(query)
             await ctx.send(resp.text)
             meta = resp.usage_metadata
             await ctx.send(f"`Prompt tokens: {meta.prompt_token_count}, Cand. tokens: {meta.candidates_token_count}, Total tokens: {meta.total_token_count}`")
