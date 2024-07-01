@@ -39,7 +39,7 @@ class AutoTwiEmbed(commands.Cog):
             or len(message.embeds) == 0
             or not message.embeds[0].image.url
         ):
-            link = "https://vxtwitter.com/" + suffix
+            link = "https://fxtwitter.com/" + suffix
             await message.reply(link, mention_author=False)
 
 
