@@ -23,13 +23,11 @@ class AutoTwiEmbed(commands.Cog):
         
         await asyncio.sleep(0.5) # allow some time for embeds to come in
 
-        if not message.embeds[0].image.url: # if we don't see images from the embed
-            # replace original link with vxtwitter link
+        # if we don't see images from the embed
+        # replace original link with vxtwitter link
+        if not message.embeds[0].image.url:
             link = message.embeds[0].url.replace("https://twitter.com/", "https://vxtwitter.com/")
             await message.reply(link, mention_author=False)
-        
-        # print("thumb", message.embeds[0].image, message.embeds[0].image.url)
-        # print(dir(discord.embeds.Embed))
         
 
 
