@@ -31,13 +31,15 @@ class AutoTwiEmbed(commands.Cog):
         suffix = message.content.split(".com/")[1]
 
         # if we don't see images from the embed, reply with a vxtwitter link
+        
         await asyncio.sleep(0.5)  # allow some time for embeds to come in
-
         # reply when: there's no embed / no image or image url is present
+        # new condition: no image from twitter's photo blob storage is present
         if (
             not message.embeds
             or len(message.embeds) == 0
             or not message.embeds[0].image.url
+            or not message.embeds[0].image.url.startswith('https://pbs.twimg.com/') # omg elon stop changing stuff...
         ):
             link = "https://fxtwitter.com/" + suffix
             await message.reply(link, mention_author=False)
