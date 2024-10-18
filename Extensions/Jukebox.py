@@ -31,7 +31,7 @@ class Jukebox(commands.Cog):
 
     async def start_nodes(self):
         node: wavelink.Node = wavelink.Node(
-            uri="http://127.0.0.1:2333", password="igproto"
+            uri="http://0.0.0.0:2333", password="igproto"
         )
         await wavelink.Pool.connect(client=self.bot, nodes=[node])
 
