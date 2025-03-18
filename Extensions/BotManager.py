@@ -1,5 +1,7 @@
+import datetime
 import logging
 import os
+from sqlite3 import Date
 import sys
 import discord
 from discord.ext import commands
@@ -11,6 +13,7 @@ log = logging.getLogger(__name__)
 
 """
 Bot manager.
+Contains listeners for bot events and commands to manage the bot.
 """
 
 
@@ -61,6 +64,8 @@ class BotManager(commands.Cog):
         await ctx.message.add_reaction("✅")
 
     # Commands
+
+    # reload all extensions
     @commands.is_owner()
     @commands.command(name="reload", disabled=True)
     async def _reload(self, ctx):
@@ -112,6 +117,29 @@ class BotManager(commands.Cog):
         await ctx.send("Shutting down...")
         await self.bot.close()
 
+
+    # download lavalink config
+    @commands.is_owner()
+    @commands.command(name="dllavaconf")
+    async def _dllavaconf(self, ctx):
+        """
+        Downloads the lavalink config file.
+        """
+        await ctx.send(file=discord.File("Lavalink/application.yml"))
+
+    # upload lavalink config
+    @commands.is_owner()
+    @commands.command(name="uplavaconf")
+    async def _uplavaconf(self, ctx):
+        """
+        Uploads the lavalink config file.
+        (still need to manually restart lavalink though)
+        """
+        # backup the current config and send it to the user
+        await ctx.send(file=discord.File(f"Lavalink/application.yml", f"application.yml.{datetime.datetime.now().strftime('%Y%m%d%H%M%S')}"))
+        
+        # save the new config
+        await ctx.message.attachments[0].save(f"Lavalink/application.yml")
 
 async def setup(bot):
     await bot.add_cog(BotManager(bot))
