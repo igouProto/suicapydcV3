@@ -49,8 +49,6 @@ class AutoTwiEmbed(commands.Cog):
         embed = message.embeds[0]
         desc = embed.description
 
-        print(embed, desc)
-
         # if there's an embed without desc AND image, we append one too
         if not desc and (
             not embed.image.url
