@@ -14,6 +14,8 @@ class Messages:
     EXTENSION_RELOADED = "✅ 已重新載入模組({}/{})。"
     EXTENSION_RELOAD_FAILED = "❌ 重新載入模組失敗：\n{}"
     BOT_BOOTED = "✅ Suica已登入。"
+    TWI_TIMEOUT_SET = "✅ 已設定推特連結逾時為：{}ms。"
+    TWI_TIMEOUT_CURRENT = "目前推特連結逾時為：{}ms。"
 
     # Rich presence messages
     DEFAULT_STATUS_MESSAGE = "v{} || {}help"
