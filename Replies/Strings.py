@@ -68,6 +68,9 @@ class Messages:
     FEATURE_FLAG_NOT_FOUND = "找不到功能：`{}`。"
     FEATURE_FLAG_STATE = "功能 `{}` 啟用狀態已更新為： {}"
 
+    # YT URL workaround
+    YT_WORKAROUND_OEMBED_FETCH_FAILED = ":pleading_face: 取得影片資訊失敗。將嘗試使用原網址搜尋。"
+
 
 class EmbedStrings:
     """

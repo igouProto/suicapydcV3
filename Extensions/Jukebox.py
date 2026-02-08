@@ -3,6 +3,7 @@ import discord
 from discord.ext import commands
 from Extensions.JukeboxHelpers.Errors import *
 from Extensions.JukeboxHelpers.Player import Player
+from Extensions.JukeboxHelpers.OEmbed import fetch_youtube_oembed, OEmbedFetchError
 from Replies.Strings import Messages
 from Replies.Embeds import JukeboxEmbeds
 from Replies.Embeds import (
@@ -10,6 +11,8 @@ from Replies.Embeds import (
 )  # TODO: Consider refactoring this to a separate module
 
 import wavelink
+
+from Suica import Bot
 
 # logging
 log = logging.getLogger(__name__)
@@ -20,7 +23,7 @@ The main command interface for the jukebox.
 
 
 class Jukebox(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Bot):
         self.bot = bot
         self.node = None
 
@@ -145,7 +148,8 @@ class Jukebox(commands.Cog):
 
         player: Player = await self.get_player(ctx)
 
-        # pre-process the query
+        # strip <> away in case someone knows that adding these removed link embeds
+        # (which is unlikely lol)
         processed_query = query.strip("<>")
 
         # process and give an extra message when adding a song from YT's playlist view.
@@ -159,8 +163,32 @@ class Jukebox(commands.Cog):
             )
 
         # perform the query
-        await ctx.send(Messages.JUKEBOX_SEARCHING.format(processed_query))
+        query_processing_msg = await ctx.send(Messages.JUKEBOX_SEARCHING.format(processed_query))
         await ctx.typing()  # typing indicator for UX
+
+        # oEmbed workaround for direct YouTube URLs (not playlists)
+        # this workaround gets the video's title and author first, then stiches them together as the new query
+        # then do a keyword search with the new query instead
+        # this is here since search still works but direct url broke for Lavalink now :/
+        if self.bot.feature_flags.is_enabled('yt_url_workaround'):
+            is_youtube_url = "youtube.com" in processed_query or "youtu.be" in processed_query
+            is_playlist = "&list=" in processed_query or "/playlist?" in processed_query
+            
+            if is_youtube_url and not is_playlist:
+                try:
+                    oembed_info = await fetch_youtube_oembed(processed_query)
+                    log.info(f"oEmbed info: {oembed_info}")
+
+                    new_query = f"{oembed_info['title']} - {oembed_info['author']}"
+                    old_query = processed_query
+                    
+                    processed_query = new_query
+                    
+                    # send updated message i.e. old query -> new query
+                    await query_processing_msg.edit(content=Messages.JUKEBOX_SEARCHING.format(f"{old_query} ➡️ {new_query}"))
+                except OEmbedFetchError as e:
+                    log.warning(f"oEmbed fetch failed: {e}")
+                    await ctx.send(Messages.YT_WORKAROUND_OEMBED_FETCH_FAILED)
 
         tracks = await wavelink.Playable.search(
             processed_query, source=wavelink.TrackSource.YouTube
