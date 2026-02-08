@@ -62,6 +62,12 @@ class Messages:
     ABOUT_FOOTER = "SUICA v{} • 使用 discord.py 及 wavelink 開發。"
     ABOUT_TITLE = "關於 SUICA"
 
+    # Feature flags
+    FEATURE_FLAG_ON = "已啟用 `{}`。"
+    FEATURE_FLAG_OFF = "已停用 `{}`。"
+    FEATURE_FLAG_NOT_FOUND = "找不到功能：`{}`。"
+    FEATURE_FLAG_STATE = "功能 `{}` 啟用狀態已更新為： {}"
+
 
 class EmbedStrings:
     """

@@ -5,6 +5,7 @@ import pkgutil
 from discord.ext import commands
 
 import Extensions
+from FeatureFlags import FeatureFlags
 from Replies.Strings import Messages
 
 log = logging.getLogger(__name__)
@@ -24,8 +25,11 @@ class Bot(commands.Bot):
         self.token = ""
         self.backstage_channel = None
         self.prefix = "."
-        self.version = "3.1.3"
+        self.version = "3.1.3a"
         self.status_message = ""
+        self.feature_flags = {}
+
+        self.feature_flags = FeatureFlags()
 
         # Load configuration from config.json
         try:
@@ -54,7 +58,7 @@ class Bot(commands.Bot):
 
         # Setup intents as they are required in 2.0
         intents = discord.Intents.default()
-        intents.message_content = True
+        intents.message_content = True        
 
         # Init the bot after setting the token and prefix
         self.token = config["token"]
