@@ -1,6 +1,7 @@
 import asyncio
 import aiohttp
 import logging
+import socket
 from urllib.parse import quote
 
 log = logging.getLogger(__name__)
@@ -32,7 +33,8 @@ async def fetch_youtube_oembed(url: str) -> dict:
     try:
         log.info("[OEmbed] Creating aiohttp session...")
         timeout = aiohttp.ClientTimeout(total=10)
-        async with aiohttp.ClientSession(timeout=timeout) as session:
+        connector = aiohttp.TCPConnector(family=socket.AF_INET)  # Force IPv4
+        async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
             log.info("[OEmbed] Sending GET request (10s timeout)...")
             async with session.get(oembed_url) as response:
                 log.info(f"[OEmbed] Response status: {response.status}")
