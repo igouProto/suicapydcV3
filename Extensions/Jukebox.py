@@ -186,7 +186,7 @@ class Jukebox(commands.Cog):
                     processed_query = new_query
                     
                     # send updated message i.e. old query -> new query
-                    await query_processing_msg.edit(content=Messages.JUKEBOX_SEARCHING.format(f"{old_query} ➡️ {new_query}"))
+                    await query_processing_msg.edit(content=Messages.JUKEBOX_SEARCHING_WORKAROUND.format(old_query, new_query))
                 except OEmbedFetchError as e:
                     log.warning(f"oEmbed fetch failed: {e}")
                     await ctx.send(Messages.YT_WORKAROUND_OEMBED_FETCH_FAILED)

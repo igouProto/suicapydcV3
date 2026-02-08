@@ -43,6 +43,7 @@ class Messages:
     JUKEBOX_NO_VOICE_CHANNEL = ":question: 我不知道你在哪裡QQ"
     JUKEBOX_ALREADY_CONNECTED = ":question: 我已經加入語音頻道囉？"
     JUKEBOX_SEARCHING = ":mag: 正在搜尋：`{}`"
+    JUKEBOX_SEARCHING_WORKAROUND = ":mag: 正在搜尋：~~`{}`~~ ➡️ `{}`"
     JUKEBOX_NO_MATCHES = ":x: 搜尋結果為空。"
     JUKEBOX_SKIPPED = ":track_next: 跳過！"
     JUKEBOX_LOOP_ONE_DISABLED_AUTO = ":arrow_right: 已自動停用單曲循環播放。"
