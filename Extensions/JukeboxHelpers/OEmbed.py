@@ -27,41 +27,29 @@ async def fetch_youtube_oembed(url: str) -> dict:
     """
     oembed_url = f"https://www.youtube.com/oembed?url={quote(url, safe='')}&format=json"
 
-    log.info(f"[OEmbed] Fetching oEmbed for URL: {url}")
-    log.info(f"[OEmbed] Constructed oEmbed URL: {oembed_url}")
-
     try:
-        log.info("[OEmbed] Creating aiohttp session...")
         timeout = aiohttp.ClientTimeout(total=10)
         connector = aiohttp.TCPConnector(family=socket.AF_INET)  # Force IPv4
         async with aiohttp.ClientSession(timeout=timeout, connector=connector) as session:
-            log.info("[OEmbed] Sending GET request (10s timeout)...")
             async with session.get(oembed_url) as response:
-                log.info(f"[OEmbed] Response status: {response.status}")
-                log.info(f"[OEmbed] Response headers: {dict(response.headers)}")
-
                 if response.status != 200:
                     body = await response.text()
-                    log.error(f"[OEmbed] Non-200 response body: {body[:500]}")
-                    raise OEmbedFetchError(f"oEmbed fetch failed with status {response.status}: {body[:200]}")
+                    log.error(f"[OEmbed] Failed with status {response.status}: {body[:200]}")
+                    raise OEmbedFetchError(f"oEmbed fetch failed with status {response.status}")
 
-                raw_body = await response.text()
-                log.info(f"[OEmbed] Raw response body: {raw_body[:500]}")
-
-                import json
-                data = json.loads(raw_body)
-                result = {
+                data = await response.json()
+                return {
                     "title": data.get("title"),
                     "author": data.get("author_name")
                 }
-                log.info(f"[OEmbed] Parsed result: {result}")
-                return result
     except asyncio.TimeoutError as e:
-        log.exception("[OEmbed] Request timed out after 10 seconds")
-        raise OEmbedFetchError("Request timed out after 10 seconds") from e
+        log.error("[OEmbed] Request timed out")
+        raise OEmbedFetchError("Request timed out") from e
     except aiohttp.ClientError as e:
-        log.exception(f"[OEmbed] aiohttp ClientError: {e}")
+        log.error(f"[OEmbed] Network error: {e}")
         raise OEmbedFetchError(f"Network error: {e}") from e
+    except OEmbedFetchError:
+        raise
     except Exception as e:
-        log.exception(f"[OEmbed] Unexpected error: {type(e).__name__}: {e}")
-        raise OEmbedFetchError(f"Unexpected error: {type(e).__name__}: {e}") from e
+        log.error(f"[OEmbed] Unexpected error: {type(e).__name__}: {e}")
+        raise OEmbedFetchError(f"Unexpected error: {e}") from e
