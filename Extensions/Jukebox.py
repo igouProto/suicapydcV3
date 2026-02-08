@@ -171,6 +171,7 @@ class Jukebox(commands.Cog):
         # then do a keyword search with the new query instead
         # this is here since search still works but direct url broke for Lavalink now :/
         if self.bot.feature_flags.is_enabled('yt_url_workaround'):
+            log.info("YT URL workaround engaged")
             is_youtube_url = "youtube.com" in processed_query or "youtu.be" in processed_query
             is_playlist = "&list=" in processed_query or "/playlist?" in processed_query
             
