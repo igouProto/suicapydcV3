@@ -43,6 +43,7 @@ class Messages:
     JUKEBOX_NO_VOICE_CHANNEL = ":question: 我不知道你在哪裡QQ"
     JUKEBOX_ALREADY_CONNECTED = ":question: 我已經加入語音頻道囉？"
     JUKEBOX_SEARCHING = ":mag: 正在搜尋：`{}`"
+    JUKEBOX_SEARCHING_WORKAROUND = ":mag: 正在搜尋：~~`{}`~~ ➡️ `{}`"
     JUKEBOX_NO_MATCHES = ":x: 搜尋結果為空。"
     JUKEBOX_SKIPPED = ":track_next: 跳過！"
     JUKEBOX_LOOP_ONE_DISABLED_AUTO = ":arrow_right: 已自動停用單曲循環播放。"
@@ -61,6 +62,15 @@ class Messages:
     ABOUT = "ID：{}\n 應用程式名稱：{}\n 擁有者：{}\n 誕生時間：{}\n作者：igouProto [(GitHub!)](https://github.com/igouProto/suicapydcV3)"
     ABOUT_FOOTER = "SUICA v{} • 使用 discord.py 及 wavelink 開發。"
     ABOUT_TITLE = "關於 SUICA"
+
+    # Feature flags
+    FEATURE_FLAG_ON = "已啟用 `{}`。"
+    FEATURE_FLAG_OFF = "已停用 `{}`。"
+    FEATURE_FLAG_NOT_FOUND = "找不到功能：`{}`。"
+    FEATURE_FLAG_STATE = "功能 `{}` 啟用狀態已更新為： {}"
+
+    # YT URL workaround
+    YT_WORKAROUND_OEMBED_FETCH_FAILED = ":pleading_face: 取得影片資訊失敗。將嘗試使用原網址搜尋。"
 
 
 class EmbedStrings:

@@ -159,6 +159,9 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+# anything in Lavalink
+Lavalink/
+
 # Misc
 .DS_Store
 keywords.txt
@@ -167,3 +170,4 @@ keywords-*.txt
 config.json
 *.jar
 notes.*
+Assets/feature_flags.json
