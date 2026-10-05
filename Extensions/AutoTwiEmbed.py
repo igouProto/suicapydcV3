@@ -58,7 +58,7 @@ class AutoTwiEmbed(commands.Cog):
 
         # Case: Twitter serving an "Age-restricted content" preview
         if self._is_age_restricted(embed):
-            await message.reply(link, mention_author=False)
+            await self._reply_and_clean(message, link)
             return
 
         # Case: Twitter serving a media preview for video / gif / multi-image posts
@@ -70,15 +70,15 @@ class AutoTwiEmbed(commands.Cog):
             data = await self._fetch_tweet_info(match.group(1)) if match else None
 
             if data is None or self._has_non_image_media(data):
-                await message.reply(link, mention_author=False)
+                await self._reply_and_clean(message, link)
             return
 
         # Case: An embed without desc AND image
         if not desc and (
             not embed.image.url
             or not embed.image.url.startswith("https://pbs.twimg.com/")
-        ):  # omg elon stop changing stuff...
-            await message.reply(link, mention_author=False)
+        ):
+            await self._reply_and_clean(message, link)
 
     # Configurable timeout as sometimes the embeds take a bit longer to come in
     @commands.command(name="settwitimeout", aliases=["twito"])
@@ -91,6 +91,16 @@ class AutoTwiEmbed(commands.Cog):
 
         self.timeout = timeout
         await ctx.send(Messages.TWI_TIMEOUT_SET.format(timeout))
+
+    @staticmethod
+    async def _reply_and_clean(message: discord.Message, link: str) -> None:
+        await message.reply(link, mention_author=False)
+        try:
+            await message.edit(suppress=True)
+        except discord.Forbidden:
+            pass
+        except discord.HTTPException:
+            log.warning("couldn't suppress embeds on message %s", message.id)
 
     @staticmethod
     def _is_age_restricted(embed: discord.Embed) -> bool:
@@ -118,7 +128,9 @@ class AutoTwiEmbed(commands.Cog):
             ) as session:
                 async with session.get(url) as resp:
                     if resp.status != 200:
-                        log.warning("vxtwitter api returned %s for %s", resp.status, post_id)
+                        log.warning(
+                            "vxtwitter api returned %s for %s", resp.status, post_id
+                        )
                         return None
                     return await resp.json()
         except (aiohttp.ClientError, asyncio.TimeoutError):
