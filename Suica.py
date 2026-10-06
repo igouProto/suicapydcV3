@@ -25,7 +25,7 @@ class Bot(commands.Bot):
         self.token = ""
         self.backstage_channel = None
         self.prefix = "."
-        self.version = "3.1.3a"
+        self.version = "3.1.4"
         self.status_message = ""
         self.feature_flags = {}
 
