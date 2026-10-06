@@ -1,3 +1,4 @@
+import Suica
 import asyncio
 import logging
 import re
@@ -21,9 +22,9 @@ isn't good enough:
 
 
 class AutoTwiEmbed(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: Suica.Bot):
         self.bot = bot
-        self.timeout = 500  # ms
+        self.timeout = 2500
 
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -37,12 +38,19 @@ class AutoTwiEmbed(commands.Cog):
         ):
             return
 
+        # Embed may already be there when the message it sent;
+        # otherwise wait for discord to unfurl it
+        if not message.embeds:
+            try:
+                await self.bot.wait_for(
+                    "raw_message_edit",
+                    check=lambda p: p.message_id == message.id and p.data.get("embeds"),
+                    timeout=self.timeout / 1000,
+                )
+            except asyncio.TimeoutError:
+                pass
+
         suffix = message.content.split(".com/")[1]
-
-        await asyncio.sleep(
-            self.timeout / 1000
-        )  # allow some (configurable, but not permanent atm) time for embeds to come in
-
         link = "https://vxtwitter.com/" + suffix
 
         # Got no embed -> append one
